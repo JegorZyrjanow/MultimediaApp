@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace MultimediaApp
 {
@@ -28,19 +31,18 @@ namespace MultimediaApp
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             // Get every logical drive on the machine
-            foreach (var drive in Directory.GetLogicalDrives())
+            foreach (var firstFolder in Directory.EnumerateDirectories("../../images/"))
             {
                 // Create a new item for it
                 var item = new TreeViewItem()
                 {
                     // Set the header
-                    Header = drive,
+                    Header = GetFileFolderName(firstFolder),
                     // And the full path
-                    Tag = drive
+                    Tag = firstFolder
                 };
-
-
 
                 // Add a dummy item
                 item.Items.Add(null);
@@ -65,6 +67,7 @@ namespace MultimediaApp
         private void Folder_Expanded(object sender, RoutedEventArgs e)
         {
             #region Initial Checks
+            
             var item = (TreeViewItem)sender;
 
             // If the item only contains the dummy data
@@ -120,7 +123,7 @@ namespace MultimediaApp
             #endregion
 
             #region Get Files
-
+            
             // Create a blank list for files
             var files = new List<string>();
 
@@ -149,6 +152,8 @@ namespace MultimediaApp
 
                 // Add this item to the parent
                 item.Items.Add(subItem);
+
+                subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
             });
 
             #endregion
@@ -182,6 +187,30 @@ namespace MultimediaApp
 
             // Return the name after the last back slash
             return path.Substring(lastIndex + 1);
+        }
+
+        #endregion
+
+        #region Item Selected
+
+        /// <summary>
+        /// When an item is selected, show it in the ImageBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Item_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var item = (TreeViewItem)sender;
+            
+            var fullPath = (string)item.Tag;
+
+            List<string> imageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
+
+            if (imageExtensions.Contains(Path.GetExtension(fullPath).ToUpperInvariant()))
+            {
+                ImageBox.Source = new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
+            }
+            else return;
         }
 
         #endregion

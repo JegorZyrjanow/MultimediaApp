@@ -96,15 +96,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\2315176.jpg" />
-    <Resource Include="Images\lttg5kes7kn51.jpg" />
-    <Resource Include="Images\pexels-philippe-donn-1169754.jpg" />
+    <Resource Include="icons\folder-closed.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\BTNHeroTinker-Reforged.jpg" />
+    <Resource Include="icons\file.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\folder_icon.png" />
+    <Folder Include="images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

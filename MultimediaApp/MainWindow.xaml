@@ -12,12 +12,13 @@
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
         
-        Loaded="Window_Loaded"><!--SizeToContent="WidthAndHeight"-->
+        Loaded="Window_Loaded">
+    <!--SizeToContent="WidthAndHeight"-->
     <Grid>
 
-        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji">
+        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="250,0,0,0">
             <TreeView.Resources>
-                
+
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
@@ -36,9 +37,12 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                
+
             </TreeView.Resources>
         </TreeView>
+
+        <Border BorderThickness="1" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="225" Background="#FFBBBBBB"/>
+        <Image x:Name="ImageBox" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="225" Stretch="UniformToFill"/>
 
     </Grid>
 </Window>
