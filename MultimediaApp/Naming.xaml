@@ -1,0 +1,20 @@
+﻿<Window x:Class="MultimediaApp.Naming"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultimediaApp"
+        mc:Ignorable="d"
+        Title=" Give the picture a name" Height="159" Width="204"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow"
+        SizeToContent="WidthAndHeight">
+    <Grid>
+        <TextBox x:Name="NameForm" HorizontalAlignment="Left" Height="20" Margin="59,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="CategoryForm" HorizontalAlignment="Left" Height="20" Margin="103,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="83"/>
+        <Button x:Name="Done" Content="Done!" HorizontalAlignment="Left" Height="21" Margin="132,88,10,10" VerticalAlignment="Top" Width="54" Click="Done_Click"/>
+        <Label Content="Name:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="30" Width="44"/>
+        <Label Content="Set a category:" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Height="30" Width="88"/>
+
+    </Grid>
+</Window>

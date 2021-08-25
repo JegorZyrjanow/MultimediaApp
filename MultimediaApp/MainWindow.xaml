@@ -5,18 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultimediaApp"
         mc:Ignorable="d"
-        Title="Gallery" Height="400" Width="600"
-        MinHeight="400"
-        MinWidth="600"
-        MaxWidth="600"
-        ResizeMode="CanResize"
+        Title="DegradationGrandMachine30000" Height="400" Width="600"
+        ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        
         Loaded="Window_Loaded">
     <!--SizeToContent="WidthAndHeight"-->
     <Grid>
 
-        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="250,0,0,0">
+        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="344,0,0,0">
             <TreeView.Resources>
 
                 <Style TargetType="{x:Type TreeViewItem}">
@@ -41,8 +37,11 @@
             </TreeView.Resources>
         </TreeView>
 
-        <Border BorderThickness="1" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="225" Background="#FFBBBBBB"/>
-        <Image x:Name="ImageBox" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="225" Stretch="UniformToFill"/>
+        <Border BorderThickness="1" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="327" Background="#FFBBBBBB"/>
+        <Image x:Name="ImageBox" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="327" Stretch="Fill"/>
+        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="176,296,0,0" VerticalAlignment="Top" Width="161" Click="Save_Click"/>
+        <Button x:Name="Download" Content="Load existing list" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="161" Click="Download_Click"/>
+        <Button x:Name="AddPicture" Content="add new meme" HorizontalAlignment="Left" Margin="176,252,0,0" VerticalAlignment="Top" Width="161" Click="AddPicture_Click"/>
 
     </Grid>
 </Window>

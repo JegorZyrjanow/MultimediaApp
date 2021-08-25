@@ -4,7 +4,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 
 namespace MultimediaApp
 {
@@ -31,7 +33,6 @@ namespace MultimediaApp
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             // Get every logical drive on the machine
             foreach (var firstFolder in Directory.EnumerateDirectories("../../images/"))
             {
@@ -67,7 +68,7 @@ namespace MultimediaApp
         private void Folder_Expanded(object sender, RoutedEventArgs e)
         {
             #region Initial Checks
-            
+
             var item = (TreeViewItem)sender;
 
             // If the item only contains the dummy data
@@ -123,7 +124,7 @@ namespace MultimediaApp
             #endregion
 
             #region Get Files
-            
+
             // Create a blank list for files
             var files = new List<string>();
 
@@ -194,7 +195,7 @@ namespace MultimediaApp
         #region Item Selected
 
         /// <summary>
-        /// When an item is selected, show it in the ImageBox
+        /// Show selected picture in the ImageBox
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -215,5 +216,113 @@ namespace MultimediaApp
 
         #endregion
 
+        #region Add Picture
+
+        /// <summary>
+        /// Add selected picture to the common folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void AddPicture_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Set filter
+            openFileDialog.Filter = "Image Files| *.jpg; *.jpeg; *.png;";
+
+            // If canceled, close FileDialog
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                return;
+
+            // Get selected file
+            var fileName = openFileDialog.FileName;
+
+            Naming namingWindow = new Naming(fileName);
+            namingWindow.ShowDialog(this);
+
+            // Copy selected file into common images directory
+            //File.Copy(fileName, @"C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\" + GetFileFolderName(fileName));
+        }
+
+        #endregion
+
+        #region XML
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        public List<Meme> memes;
+
+        #region Download list from xml
+
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+            XmlSerializer formatter = new XmlSerializer(typeof(List<Meme>));
+
+            using (FileStream fs = new FileStream("../../App_Data/memes.xml", FileMode.OpenOrCreate))
+            {
+                memes = (List<Meme>)formatter.Deserialize(fs);
+
+            }
+        }
+
+        #endregion
+
+        #region Save сurrent list in xml
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+
+            #region memes check and write a list from it
+
+            // Create a blank list for files
+            var files = new List<string>();
+
+            // Try and get files from the folder
+            // ignoring any issues doing so
+            try
+            {
+                var fs = Directory.GetFiles("../../images/memes/", "*.jpg");
+
+                if (fs.Length > 0)
+                    files.AddRange(fs);
+            }
+            catch { }
+
+            files.ForEach(filePath =>
+            {
+                // Create meme item
+                var memePic = new Meme
+                {
+                    Name = GetFileFolderName(filePath),
+
+                    Category = "0",
+
+                    Uri = filePath
+                };
+
+                memes.Add(memePic);
+
+            });
+
+            #endregion
+
+            XmlSerializer formatter = new XmlSerializer(typeof(List<Meme>));
+
+            using (FileStream fs = new FileStream("../../App_Data/memes.xml", FileMode.Create))
+            {
+                formatter.Serialize(fs, memes);
+            }
+
+            //File.WriteAllText(@"C:\Users\User\Desktop\MultimediaApp\MultimediaApp\App_Data\data1.json", json);
+
+        }
+
+        #endregion
+
+        #endregion
     }
 }
