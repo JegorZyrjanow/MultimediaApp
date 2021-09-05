@@ -12,7 +12,7 @@
     <!--SizeToContent="WidthAndHeight"-->
     <Grid>
 
-        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="344,0,0,0">
+        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="344,35,0,0">
             <TreeView.Resources>
 
                 <Style TargetType="{x:Type TreeViewItem}">
@@ -20,7 +20,7 @@
                         <Setter.Value>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Width="20" Margin="3"
+                                    <Image Width="32" Height="32" Margin="3"
                                         Source="{Binding
                                             RelativeSource={RelativeSource
                                                 Mode=FindAncestor,
@@ -42,6 +42,9 @@
         <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="176,296,0,0" VerticalAlignment="Top" Width="161" Click="Save_Click"/>
         <Button x:Name="Download" Content="Load existing list" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="161" Click="Download_Click"/>
         <Button x:Name="AddPicture" Content="add new meme" HorizontalAlignment="Left" Margin="176,252,0,0" VerticalAlignment="Top" Width="161" Click="AddPicture_Click"/>
+        <Button x:Name="DeletePicture" Content="Delete selected meme" HorizontalAlignment="Left" Margin="10,252,0,0" VerticalAlignment="Top" Width="161" Click="DeletePicture_Click"/>
+        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="20" Margin="344,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TextChanged="SearchBox_TextChanged"/>
+        <ComboBox x:Name="CategoriesComboBox" HorizontalAlignment="Left" Height="20" Margin="489,10,0,0" VerticalAlignment="Top" Width="95" SelectionChanged="CategoriesComboBox_SelectionChanged" SelectedIndex="0"/>
 
     </Grid>
 </Window>

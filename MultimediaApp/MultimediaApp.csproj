@@ -122,5 +122,8 @@
   <ItemGroup>
     <Resource Include="TODO now.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Structure.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
