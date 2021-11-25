@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace MultimediaApp
+namespace MultimediaApp.Library
 {
     [Serializable]
-    public class Meme
+    public class Picture
     {
         public string Name { get; set; }
-        public string Id { get; set; }
         public string Category { get; set; }
-        public string Uri { get; set; }
+        public int Id { get; set; }
+        public string Path { get; set; }
     }
 }

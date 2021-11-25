@@ -6,19 +6,18 @@ namespace MultimediaApp
     /// <summary>
     /// Interaction logic for Naming.xaml
     /// </summary>
-    public partial class Naming : Window
+    public partial class NamingWindow : Window
     {
+        private Picture _picture;
+        private string FilePath;
+
         public void ShowDialog(Window owner)
         {
             this.Owner = owner;
             this.ShowDialog();
         }
 
-        public string FileName { get; set; }
-        public string FileCategory { get; set; }
-        public string FilePath { get; set; }
-
-        public Naming(string file)
+        public NamingWindow(string file)
         {
             InitializeComponent();
 
@@ -27,17 +26,26 @@ namespace MultimediaApp
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(NameForm.Text))
-                FileName = MainWindow.GetFileFolderName(FilePath);
-            else
-                FileName = NameForm.Text + $" ({ FilePath.Substring(FilePath.LastIndexOf('.') + 1).ToUpper() })";
+            _picture = new Picture();
 
-            FileCategory = CategoryForm.Text;
+            if (string.IsNullOrEmpty(NameForm.Text))
+                _picture.Name = Helper.GetFileName(FilePath);
+            else
+                _picture.Name = NameForm.Text + $" ({ FilePath.Substring(FilePath.LastIndexOf('.') + 1).ToUpper() })";
+
+            _picture.Category = CategoryForm.Text;
+
+            _picture.Path = FilePath;
 
             //File.Copy(FilePath, @"C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\" + FileName);
 
             // Close window
             this.Close();
+        }
+
+        public Picture GetMeme()
+        {
+            return _picture;
         }
     }
 }

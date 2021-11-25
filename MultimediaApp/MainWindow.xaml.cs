@@ -6,9 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Windows.Data;
+using System.Globalization;
 using System.Linq;
+using MultimediaApp.Properties;
+using System.Threading;
+using MultimediaApp.Library;
 
 namespace MultimediaApp
 {
@@ -17,64 +20,24 @@ namespace MultimediaApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Constructor
-
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new ApplicationViewModel();
         }
 
-        #endregion
+        //private XmlFormatter _xmlFormatter = new XmlFormatter();
+        //private PictureCollection _collection;
+        //private Caretaker _collectionCaretaker;
+        //private List<string> _imageExtensions = new List<string>() { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
 
-        // Create the main memes list
-        private List<Meme> _MemesList = new List<Meme>();
+        //private CollectionEnumerator _enumerator = new CollectionEnumerator();
+        //private string XmlPath = "../../AppData/memes.xml";
 
-        // Create Cache list
-        private List<Meme> _MemesListCache = new List<Meme>();
-
-        // Create Categories list
-        private List<string> _Categories= new List<string>();
-
-        // Create pic parameters containers ??
-        private string _pictureName;
-        private string _picturePath;
-
-        private int _chosenItemId;
-
-        // Checkers
-        private bool itemWasChosen = false;
-
-        #region On Loaded
-
-        /// <summary>
-        /// When the application first opens
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            #region Load Current List
-
-            // Get List of Memes from XML file
-            XmlSerializer formatter = new XmlSerializer(typeof(List<Meme>));
-            try
-            {
-                using (FileStream fs = new FileStream("../../App_Data/memes.xml", FileMode.OpenOrCreate))
-                {
-                    _MemesList = (List<Meme>)formatter.Deserialize(fs);
-                }
-            }
-            catch { }
-
-            // Display current list in the TreeView
-            DisplayTreeView();
-
-            #endregion
-
-            // Duplicate it
-            _MemesListCache = _MemesList;
-
-            #region Initialize Categories ()
+            
 
             {
                 //var categoriesList = new List<string>();
@@ -145,68 +108,36 @@ namespace MultimediaApp
                     //}
                 }
             }
-            // Create Categories List
-            _Categories = GetCollectionByTag("Category");
-
-            // Add common category at 0th index
-            CategoriesComboBox.Items.Insert(0, "All");
-
-            // Keep only unique Categories
-            var uniqueCategoriesList = _Categories.Distinct().ToList();
-            uniqueCategoriesList.ForEach(category => CategoriesComboBox.Items.Add(category));
-
-            #endregion
-
         }
+        
+        //private void DisplayImage(TreeViewItem item)
+        //{
+        //    string fullPath = (string)item.Tag;
+        //    //Uri relPath = new Uri(Directory.GetCurrentDirectory()).MakeRelativeUri(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
 
-        #endregion
+        //    if (_imageExtensions.Contains(Path.GetExtension(fullPath).ToUpperInvariant()))
+        //        ImageBox.Source = new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
+        //    else
+        //        return;
 
-        #region Display TreeView
+        //    // Set checker true to delete method
+        //    _itemWasChosen = true;
+        //}
 
-        private void DisplayTreeView()
+        private void DisplayImageAt(object sender)
         {
-            // For each file...
-            _MemesList.ForEach(meme =>
+            TreeViewItem treeItem = sender as TreeViewItem;
+            BitmapImage bitmapImage = new BitmapImage();
+            try
             {
-                // Create file item
-                var subItem = new TreeViewItem()
-                {
-                    // Set header as file name
-                    Header = meme.Name,
-                    // And tag as full path
-                    Tag = meme.Uri
-                };
-
-                // Add this item to the parent
-                FolderView.Items.Add(subItem);
-
-                subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
-            });
-        }
-
-        #endregion
-
-        #region Display Image
-
-        private void DisplayImageClickReaction(TreeViewItem item)
-        {
-            var fullPath = (string)item.Tag;
-
-            List<string> imageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-            if (imageExtensions.Contains(Path.GetExtension(fullPath).ToUpperInvariant()))
-            {
-                ImageBox.Source = new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
+                bitmapImage = new BitmapImage(new Uri(treeItem.Tag.ToString())); //??
             }
-            else
+            catch (FileNotFoundException)
             {
-                return;
+                bitmapImage = new BitmapImage(new Uri($"pack://application:,,,/Images/notFound.png"));
             }
-
-            // Set checker true to delete method
-            itemWasChosen = true;
+            ImageBox.Source = bitmapImage;
         }
-
-        #endregion
 
         #region Folder Expanded (NOT USED)
 
@@ -256,7 +187,7 @@ namespace MultimediaApp
                 var subItem = new TreeViewItem()
                 {
                     // Set header as folder name
-                    Header = GetFileFolderName(directoryPath),
+                    //Header = GetFileFolderName(directoryPath),
                     // And tag as full path
                     Tag = directoryPath
                 };
@@ -296,7 +227,7 @@ namespace MultimediaApp
                 var subItem = new TreeViewItem()
                 {
                     // Set header as file name
-                    Header = GetFileFolderName(filePath),
+                    //Header = GetFileFolderName(filePath),
                     // And tag as full path
                     Tag = filePath
                 };
@@ -313,163 +244,55 @@ namespace MultimediaApp
 
         #endregion
 
-        #region Select Picture Actions
-
-        /// <summary>
-        /// Show selected picture in the ImageBox
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Item_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) // id сделай чтобы вместо ссылки получал...
         {
-            #region Get ID
-            {
-                // Get XmlDox
-
-                //var titlesList = new List<string>();
-
-                //XmlDocument doc = new XmlDocument();
-                //doc.Load("../../App_Data/memes.xml");
-                //XmlNodeList elementList = doc.GetElementsByTagName("Name");
-                //for (int i = 0; i < elementList.Count; i++)
-                //{
-                //    titlesList.Add(elementList[i].InnerText.ToLower());
-                //}
-            }
-            // Get the name of chosen meme
-            var item = (TreeViewItem)sender;
-            var nameOfChosenItem = (string)item.Header;
-
-            //FolderView.Items.Clear();
-            // Counter for id
-            var counter = 0;
-            foreach (var titles in GetCollectionByTag("Name"))
-            {
-                // If there's match with a name in the list . . .
-                if (titles.Contains(nameOfChosenItem.ToLower()))
-                {
-                    // get id of matched element
-                    _chosenItemId = counter;
-                    {
-                        //id.Add(counter);
-
-                        //sovp.Add(titles);
-                        //var subItem = new TreeViewItem()
-                        //{
-                        //    // Set header as file name
-                        //    Header = memes[counter].Name,
-                        //    // And tag as full path
-                        //    Tag = memes[counter].Uri
-                        //};
-
-                        //// Add this item to the parent
-                        //FolderView.Items.Add(subItem);
-
-                        //subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
-                    }
-                }
-                {
-                    //else
-                    //{
-                    //    id.Add(0);
-                    //}
-                    //else
-                    //{
-                    //    FolderView.Items.Add(null);
-                    //}
-                }
-                counter++;
-            }
-            counter = 0; //??
-
-            #endregion
-
-            #region Display Image ( separate method )
-
-            DisplayImageClickReaction(item);
-
-            {
-                //var fullPath = (string)item.Tag;
-
-                //List<string> imageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-
-                //if (imageExtensions.Contains(Path.GetExtension(fullPath).ToUpperInvariant()))
-                //{
-                //    ImageBox.Source = new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
-                //}
-                //else return;
-
-                //// Set checker true for delete method
-                //itemWasChosen = true;
-            }
-
-            #endregion
-
+            DisplayImageAt(sender);
+            //UIElement uIElement = sender as UIElement;
+            //int selected = int.Parse(uIElement.Uid);
+            //int selectedItem = CollectionView.Items.IndexOf(CollectionView.SelectedItem); // for id only
+            //_chosenItemId = CollectionView.Items.IndexOf(CollectionView.SelectedItem);            
+            //ItemIdLabel.Content = selected;
+            //TVIIdLabel.Content = selectedItem;
         }
 
-        #endregion
+        //public static string GetFileName(string path)
+        //{
+        //    // If we have no path, return empty
+        //    if (string.IsNullOrEmpty(path))
+        //        return string.Empty;
 
-        #region Helpers
+        //    // Make all slashes back slashes
+        //    var normalizedPath = path.Replace('/', '\\');
 
-        /// <summary>
-        /// Find the file or folder name from a full path
-        /// </summary>
-        /// <param name="path">The full path</param>
-        /// <returns></returns>
-        public static string GetFileFolderName(string path)
+        //    // Find the last backslash in the path
+        //    var lastIndex = normalizedPath.LastIndexOf('\\');
+
+        //    // If we don't find a backslash, return the path itself
+        //    if (lastIndex <= 0)
+        //        return path;
+
+        //    // Return the name after the last back slash
+        //    return path.Substring(lastIndex + 1);
+        //}
+        
+        private void DisplayAll()
         {
-            // If we have no path, return empty
-            if (string.IsNullOrEmpty(path))
-                return string.Empty;
-
-            // Make all slashes back slashes
-            var normalizedPath = path.Replace('/', '\\');
-
-            // Find the last backslash in the path
-            var lastIndex = normalizedPath.LastIndexOf('\\');
-
-            // If we don't find a backslash, return the path itself
-            if (lastIndex <= 0)
-                return path;
-
-            // Return the name after the last back slash
-            return path.Substring(lastIndex + 1);
-        }
-
-        /// <summary>
-        /// Find the list of inner texts by tagname from the XML file
-        /// </summary>
-        /// <param name="tagName"></param>
-        /// <returns></returns>
-        private List<string> GetCollectionByTag(string tagName)
-        {
-            List<string> list = new List<string>();
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load("../../App_Data/memes.xml");
-            XmlNodeList elementList = doc.GetElementsByTagName(tagName);
-            for (int i = 0; i < elementList.Count; i++)
+            CollectionView.Items.Clear();
+            for (int i = 0; i < _collection.GetCollection().Count; i++)
             {
-                list.Add(elementList[i].InnerText.ToLower());
+                CollectionView.Items.Add(MakeTreeViewItem(_collection.GetCollection()[i]));
+            }            
+            foreach (TreeViewItem treeViewItem in CollectionView.Items)
+            {
+                treeViewItem.Visibility = Visibility.Visible;
             }
-            return list;
         }
-
-        #endregion
-
-        #region XML
-
-        #region Add Picture ( or not picture btw )
-
-        /// <summary>
-        /// Add selected picture to the common folder
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void AddPicture_Click(object sender, RoutedEventArgs e)
+        
+        private void AddNewPicButton_Click(object sender, RoutedEventArgs e)
         {
+            _collectionCaretaker.Backup();
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
-
             // Set filter
             openFileDialog.Filter = "Image Files| *.jpg; *.jpeg; *.png;";
 
@@ -478,302 +301,230 @@ namespace MultimediaApp
                 return;
 
             // Get selected file
-            var fileName = openFileDialog.FileName;
-            Naming namingWindow = new Naming(fileName);
+            string filePath = openFileDialog.FileName;
 
-            namingWindow.ShowDialog(this);
-            _pictureName = namingWindow.FileName;
-            _picturePath = namingWindow.FilePath;
-
-            // Add new pic in the list of memes
-            _MemesListCache.Add(new Meme
+            // Check file for correct ext, and exit if invalid
+            if (!_imageExtensions.Contains(Path.GetExtension(filePath).ToUpperInvariant()))
             {
-                Name = _pictureName,
-                Category = "0",
-                Uri = _picturePath
-            });
-
-            FolderView.Items.Clear();
-            DisplayTreeView();
-            {//File.Copy(fileName, @"C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\" + GetFileFolderName(fileName));
-            }// Copy selected file into common images directory
-        }
-
-        #endregion
-
-        #region Delete Picture
-
-        /// <summary>
-        /// Delete the selected picture
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DeletePicture_Click(object sender, RoutedEventArgs e)
-        {
-            if (!itemWasChosen)
+                System.Windows.MessageBox.Show("I don\'t get it..");
                 return;
-            else
-            {
-                // Удаляем выбранный мем из списка и убираем его из дерева
-                var selected = FolderView.Items.IndexOf(FolderView.SelectedItem);
-
-                //memes.IndexOf
-                //try
-                //{
-                _MemesListCache.RemoveAt(_chosenItemId);
-                //}
-                //catch { }
-                _chosenItemId = -1;
-
-                FolderView.Items.RemoveAt(selected);
-
-                itemWasChosen = false;
-
-                ImageBox.Source = null;
             }
+
+            NamingWindow namingWindow = new NamingWindow(filePath);
+            // Open Dialog Window
+            namingWindow.ShowDialog(this);
+            // Add new pic in the CacheList of memes
+            _collection.Add(namingWindow.GetMeme());
+            if (!CategoriesComboBox.Items.Contains(_collection.GetLastCategory()))
+            {
+                CategoriesComboBox.Items.Add(_collection.GetLastCategory());
+            }
+            DisplayAll();
         }
 
-        #endregion
+        private void RemovePicture_Click(object sender, RoutedEventArgs e)
+        {
+            _collectionCaretaker.Backup();
 
-        #region Download The List
+            int selectedId = CollectionView.Items.IndexOf(CollectionView.SelectedItem);
 
-        /// <summary>
-        /// Download memes list from XML file
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+            //if(_collection.GetCollection().Contains(Picture.Category))
+
+
+            _collection.RemoveAt(selectedId);
+            CollectionView.Items.Remove(CollectionView.SelectedItem);
+
+            ImageBox.Source = null;
+        }
+
         private void Download_Click(object sender, RoutedEventArgs e)
         {
             CategoriesComboBox.SelectedItem = 0;
             CategoriesComboBox.SelectedIndex = 0;
-
-            XmlSerializer formatter = new XmlSerializer(typeof(List<Meme>));
-
-            try
-            {
-                using (FileStream fs = new FileStream("../../App_Data/memes.xml", FileMode.OpenOrCreate))
-                {
-                    _MemesList = (List<Meme>)formatter.Deserialize(fs);
-                }
-            }
-            catch { }
-
-            _MemesListCache = _MemesList;
-
-            FolderView.Items.Clear();
-            DisplayTreeView();            
-            {
-                //// For each file...
-                //memes.ForEach(meme =>
-                //{
-                //    // Create file item
-                //    var subItem = new TreeViewItem()
-                //    {
-                //        // Set header as file name
-                //        Header = GetFileFolderName(meme.Uri),
-                //        // And tag as full path
-                //        Tag = meme.Uri
-                //    };
-
-                //    // Add this item to the parent
-                //    FolderView.Items.Add(subItem);
-
-                //    subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
-                //});
-            }// moved out
             SearchBox.Text = null;
+            _collectionCaretaker.Undo();
+            DisplayAll();
         }
 
-        #endregion
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            _collectionCaretaker.Undo();
+            DisplayAll();
+        }
 
-        #region Save Current List
-
-        bool saveWasPressed = false;
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (saveWasPressed)
-            {
-                File.WriteAllText("../../App_Data/memes.xml", "");
-            }
-
-            _MemesList = _MemesListCache;
-
-            XmlSerializer formatter = new XmlSerializer(typeof(List<Meme>));
-            using (FileStream fileStream = new FileStream("../../App_Data/memes.xml", FileMode.Create))
-            {
-                formatter.Serialize(fileStream, _MemesList);
-            }
-            saveWasPressed = true;
+            _xmlFormatter.Serialize(_collection.GetCollection());
+            //if (_saveWasPressed)
+            //{
+            //    File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/DGM3/memes.xml", "");
+            //}
+            //_collectionCaretaker.Backup();
+            //_saveWasPressed = true;
         }
 
-        #endregion
+        #region Search
 
-        #endregion
+        List<TreeViewItem> collapsedItems = new List<TreeViewItem>();
 
-        #region Search by Name
-
+        string searchText = string.Empty;
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            searchText = SearchBox.Text;
+
+            for (int i = 0; i < _collection.GetCollection().Count; i++)
             {
-                //var text = SearchBox.Text;
-
-                //string fileName = "c:\\users\\xxxxx\\documents\\visual studio 2010\\Projects\\WpfApplication2\\WpfApplication2\\XML.xml";
-
-                //var doc = XDocument.Load(fileName);
-                //var findString = "text";
-
-                //var results = doc.Element("Servernames").Descendants("Servername").Where(d => d.Value.Contains(findString)).Select(d => d.Value);
-
-                ////getName = namingWindow.FileName;
-                ////getPath = namingWindow.FilePath;
-
-                //// Add new pic in the list of memes
-                //memes.Add(new Meme
-                //{
-                //    Name = getName,
-                //    Category = "0",
-                //    Uri = getPath
-                //});
-
-                //DisplayTreeView();
-                //var titlesList = new List<string>();
-
-                ////Create the XmlDocument.
-                //XmlDocument doc = new XmlDocument();
-
-                //doc.Load("../../App_Data/memes.xml");
-                ////Display all the book titles.
-                //XmlNodeList elemList = doc.GetElementsByTagName("Name");
-                //for (int i = 0; i < elemList.Count; i++)
-                //{
-                //    titlesList.Add(elemList[i].InnerText);
-                //}
-
-                //foreach (var titles in titlesList)
-                //{
-                //    if (titles.StartsWith(SearchBox.Text))
-                //    {
-                //        FolderView.Items.Clear();
-                //        //FolderView.Items.Add(memes[]);
-                //        FolderView.Items.Add(memes[titlesList.FindIndex(a => a.Contains(SearchBox.Text))]);
-                //    }
-
-                //}
-
-                //XmlSerializer formatter = new XmlSerializer(typeof(List<string>));
-            }
-            {
-                //var titlesList = new List<string>();
-
-                //XmlDocument doc = new XmlDocument();
-                //doc.Load("../../App_Data/memes.xml");
-                //XmlNodeList elementList = doc.GetElementsByTagName("Name");
-                //for (int i = 0; i < elementList.Count; i++)
-                //{
-                //    titlesList.Add(elementList[i].InnerText.ToLower());
-                //}
-
-                //var match = new List<string>();
-            }
-            if (string.IsNullOrEmpty(SearchBox.Text))
-            {
-                Download_Click(sender, e);
-                return;
-            }
-
-            FolderView.Items.Clear();
-
-            int counter = 0;
-            foreach (var titles in GetCollectionByTag("Name"))
-            {
-                if (titles.Contains(SearchBox.Text.ToLower()))
-                {//match.Add(titles);                    
-                    var subItem = new TreeViewItem()
-                    {
-                        // Set header as file name
-                        Header = _MemesList[counter].Name,
-                        // And tag as full path
-                        Tag = _MemesList[counter].Uri
-                    };
-                    // Add this item to the parent
-                    FolderView.Items.Add(subItem);
-                    {
-                    //FolderView.Items.Clear();
-                    //FolderView.Items.Add(memes[titles.IndexOf(SearchBox.Text)]);
-                    //FolderView.Items.Add(memes[titlesList.FindIndex(a => a.Contains(SearchBox.Text))]);
-                    }
-                    subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
+                if (!_collection.GetCollection()[i].Name.ToLower().Contains(searchText.ToLower()))
+                {
+                    (CollectionView.Items.GetItemAt(i) as TreeViewItem).Visibility = Visibility.Collapsed;
                 }
-                counter++;
+                else
+                    (CollectionView.Items.GetItemAt(i) as TreeViewItem).Visibility = Visibility.Visible;
             }
-            counter = 0;
+            
             {
-                //XmlSerializer formatter = new XmlSerializer(typeof(List<string>));
+            //if (string.IsNullOrEmpty(SearchBox.Text))
+            //{
+            //    return;
+            //}
+
+            //foreach (var collectionItem in _collection.GetCollection())
+            //{
+            //    if (!collectionItem.Name.ToLower().Contains(searchText.ToLower()))
+            //    {
 
 
-                //using (FileStream fileStream = new FileStream("../../App_Data/memeslist.xml", FileMode.Create))
-                //{
-                //    formatter.Serialize(fileStream, titlesList);
-                //}
+            //        foreach (TreeViewItem treeViewItem in CollectionView.Items)
+            //        {
+            //            var uiElement = treeViewItem as UIElement;
+
+            //            if (uiElement.Uid == collectionItem.Id.ToString())
+            //                treeViewItem.Visibility = Visibility.Collapsed;
+            //        }
+            //    }
+            //}
             }
         }
 
-        #endregion
-
-        #region Filter by category ()
-
+        string SelectedCategory = string.Empty;
         private void CategoriesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CategoriesComboBox.SelectedIndex == 0)
+            SelectedCategory = (sender as System.Windows.Controls.ComboBox).SelectedItem as string;
+
+            for (int i = 0; i < _collection.GetCollection().Count; i++)
             {
-                Download_Click(sender, e);
-                return;
+                if (CategoriesComboBox.SelectedIndex == 0)
+                {
+                    DisplayAll();
+                }
+                else if (_collection.GetCollection()[i].Category.ToLower() != SelectedCategory.ToLower())
+                {
+                    (CollectionView.Items.GetItemAt(i) as TreeViewItem).Visibility = Visibility.Collapsed;
+                    collapsedItems.Add(CollectionView.Items.GetItemAt(i) as TreeViewItem);
+                }
+                else
+                    (CollectionView.Items.GetItemAt(i) as TreeViewItem).Visibility = Visibility.Visible;
             }
+
             {
-                //if (string.IsNullOrEmpty(SearchBox.Text))
+                //CollectionView.Items.Clear();
+
+                //if (CategoriesComboBox.SelectedIndex == 0)
                 //{
-                //    Download_Click(sender, e);
+                //    DisplayCurrentListInTreeView(); // ???????????????
                 //    return;
                 //}
 
-                //var categoriesList = new List<string>();
-                //XmlDocument doc = new XmlDocument();
-                //doc.Load("../../App_Data/memes.xml");
-                //XmlNodeList elementList = doc.GetElementsByTagName("Category");
-                //for (int i = 0; i < elementList.Count; i++)
-                //{
-                //    categoriesList.Add(elementList[i].InnerText.ToLower());
-                //}
 
-                //var match = new List<string>();
+                //PictureCollection sortedCollection = _enumerator.SortByCategory(SelectedCategory, _collection);
+
+                //CollectionView.Items.MouseLeftButtonUp += Item_MouseLeftButtonUp;
+                //List<TreeViewItem> collection = XmlDataEnumerator.GetItemsBy(comboBoxChosenItem, "Category", _collection.GetMemesCache());            
             }
-            FolderView.Items.Clear();
-
-            int counter = 0;
-            var collection = GetCollectionByTag("Category");
-            string comboBoxText = (sender as System.Windows.Controls.ComboBox).SelectedItem as string;
-            foreach (var category in collection)
             {
-                if (category.Contains(comboBoxText.ToLower()))
-                {
-                    var subItem = new TreeViewItem()
-                    {
-                        // Set header as file name
-                        Header = _MemesList[counter].Name,
-                        // And tag as full path
-                        Tag = _MemesList[counter].Uri
-                    };
+            //if (string.IsNullOrEmpty(SearchBox.Text))
+            //{
+            //    Download_Click(sender, e);
+            //    return;
+            //}
 
-                    FolderView.Items.Add(subItem);
+            //var categoriesList = new List<string>();
+            //XmlDocument doc = new XmlDocument();
+            //doc.Load("../../App_Data/memes.xml");
+            //XmlNodeList elementList = doc.GetElementsByTagName("Category");
+            //for (int i = 0; i < elementList.Count; i++)
+            //{
+            //    categoriesList.Add(elementList[i].InnerText.ToLower());
+            //}
 
-                    subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
-                }
-                counter++;
-            }
+            //var match = new List<string>();
+            
+            //
+            //foreach (var category in collection)
+            //{
+            //    if (category.Contains(comboBoxText.ToLower()))
+            //    {
+            //        var subItem = new TreeViewItem()
+            //        {
+            //            // Set header as file name
+            //            Header = _MemesList[counter].Name,
+            //            // And tag as full path
+            //            Tag = _MemesList[counter].Uri
+            //        };
+
+            //        FolderView.Items.Add(subItem);
+
+            //        subItem.MouseLeftButtonUp += Item_MouseLeftButtonUp;
+            //    }
+            //    counter++;
+            //}
+
             //counter = 0;
+            }
+        }
+
+        private TreeViewItem MakeTreeViewItem(Picture ReceivedPicture)
+        {
+            TreeViewItem treeViewItem = new TreeViewItem()
+            {
+                // Set header as file name
+                Header = ReceivedPicture.Name,
+                // And tag as full path
+                Tag = ReceivedPicture.Path,
+                Uid = ReceivedPicture.Id.ToString(),
+            };
+            return treeViewItem;
         }
 
         #endregion
+
+        internal class Display
+        {
+            private PictureCollection _gallery = new PictureCollection(null);
+            private CollectionEnumerator _enumerator = new CollectionEnumerator();
+
+            public Display(PictureCollection memeCollection)
+            {
+                _gallery = memeCollection;
+            }
+
+            public PictureCollection ShowAll()
+            {
+                return _gallery;
+            }
+
+            public PictureCollection ShowByName(string Name)
+            {
+                PictureCollection filteredCollection = new PictureCollection(null);
+
+                filteredCollection = _enumerator.SortByName(Name, _gallery);
+
+                return filteredCollection;
+            }
+
+            
+        }
+
 
     }
 }

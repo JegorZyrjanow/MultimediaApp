@@ -8,12 +8,13 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MultimediaApp</RootNamespace>
     <AssemblyName>MultimediaApp</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -57,6 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="PictureCollection.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -66,19 +71,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HeaderToImageConverter.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Naming.xaml">
+    <Page Include="NamingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Meme.cs" />
-    <Compile Include="Naming.xaml.cs">
-      <DependentUpon>Naming.xaml</DependentUpon>
+    <Compile Include="NamingWindow.xaml.cs">
+      <DependentUpon>NamingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -97,8 +102,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="App_Data\data.json" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,23 +110,24 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Resource Include="icons\folder-closed.png" />
+    <Resource Include="Structure\TODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icons\file.png" />
+    <Resource Include="Structure\Structure.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="images\" />
+    <Resource Include="Structure\Fs.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="TODO.txt" />
+    <Resource Include="Structure\Other.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="TODO now.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Structure.txt" />
+    <ProjectReference Include="..\MultimediaApp.Library\MultimediaApp.Library.csproj">
+      <Project>{6f56eb72-eb7c-4583-9f10-bbdff7157580}</Project>
+      <Name>MultimediaApp.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

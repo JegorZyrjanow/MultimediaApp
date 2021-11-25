@@ -4,11 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using MultimediaApp.Properties;
 
 namespace MultimediaApp
 {
     /// <summary>
-    /// Converts a full path to a specific image type of a drive, folder or file
+    /// Converts a full path to a specific image type of a pic
     /// </summary>
     [ValueConversion(typeof(string), typeof(BitmapImage))]
     public class HeaderToImageConverter : IValueConverter
@@ -18,14 +19,15 @@ namespace MultimediaApp
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // Get the full path
-            var path = (string)value;
+            string fullPath = (string)value;
+            //Uri relPath = new Uri(Directory.GetCurrentDirectory()).MakeRelativeUri(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
 
             // If the path is null, ignore
-            if (path == null)
+            if (fullPath == null)
                 return null;
 
             // Get the name of the file/folder
-            var name = MainWindow.GetFileFolderName(path);
+            var name = Helper.GetFileName(fullPath);
 
             // By default, we presume an image
             var image = "icons/file.png";
@@ -37,8 +39,22 @@ namespace MultimediaApp
             //if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
             //    image = "icons/folder-closed.png";
             //else
-            if (imageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
-                return new BitmapImage(new Uri(Path.GetFullPath(path), UriKind.Absolute));
+            if (imageExtensions.Contains(Path.GetExtension(fullPath).ToUpperInvariant()))
+            {
+                try
+                {
+                    return new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
+                }
+                catch
+                {
+                    return Resources.ae8ac2fa217d23aadcc913989fcc34a2;
+                    //return new BitmapImage(Resources.ae8ac2fa217d23aadcc913989fcc34a2);
+                    throw;
+                }
+                finally { }
+
+                //return new BitmapImage(new Uri(Path.GetFullPath(fullPath), UriKind.Absolute));
+            }
             else
                 return new BitmapImage(new Uri($"pack://application:,,,/{image}"));
         }

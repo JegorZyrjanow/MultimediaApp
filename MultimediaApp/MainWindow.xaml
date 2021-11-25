@@ -5,17 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultimediaApp"
         mc:Ignorable="d"
-        Title="DegradationGrandMachine30000" Height="400" Width="600"
+        Title="DegradationGrandMachine" Height="422" Width="600"
         ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
-    <!--SizeToContent="WidthAndHeight"-->
+
     <Grid>
 
-        <TreeView x:Name="FolderView" VerticalAlignment="Top" FontFamily="Segoe UI Emoji" Margin="344,35,0,0">
+        <TreeView x:Name="CollectionView" VerticalAlignment="Top" Margin="350,35,0,0">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=Collection}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
             <TreeView.Resources>
-
                 <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="MouseLeftButtonUp" Handler="Item_MouseLeftButtonUp" />
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -33,18 +39,23 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-
             </TreeView.Resources>
         </TreeView>
 
-        <Border BorderThickness="1" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="327" Background="#FFBBBBBB"/>
-        <Image x:Name="ImageBox" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="327" Stretch="Fill"/>
-        <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="176,296,0,0" VerticalAlignment="Top" Width="161" Click="Save_Click"/>
-        <Button x:Name="Download" Content="Load existing list" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="161" Click="Download_Click"/>
-        <Button x:Name="AddPicture" Content="add new meme" HorizontalAlignment="Left" Margin="176,252,0,0" VerticalAlignment="Top" Width="161" Click="AddPicture_Click"/>
-        <Button x:Name="DeletePicture" Content="Delete selected meme" HorizontalAlignment="Left" Margin="10,252,0,0" VerticalAlignment="Top" Width="161" Click="DeletePicture_Click"/>
-        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="20" Margin="344,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" TextChanged="SearchBox_TextChanged"/>
+        <Border BorderThickness="1" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="335" Background="#FFBBBBBB"/>
+        <Image x:Name="ImageBox" RenderTransformOrigin="0.5, 0.5" HorizontalAlignment="Left" Height="237" Margin="10,10,0,0" VerticalAlignment="Top" Width="335"/>
+        <Button x:Name="Save" Content="Override XML&#xD;&#xA;and save" HorizontalAlignment="Left" Margin="180,252,0,0" VerticalAlignment="Top" Width="80" Click="Save_Click" Height="35"/>
+        <Button x:Name="Download" Content="Load existing&#xD;&#xA;list" HorizontalAlignment="Left" Margin="95,252,0,0" VerticalAlignment="Top" Width="80" Click="Download_Click" Height="35"/>
+        <Button x:Name="AddNewPicButton" Content="Add new" HorizontalAlignment="Left" Margin="10,252,0,0" VerticalAlignment="Top" Width="80" Click="AddNewPicButton_Click" Height="35"/>
+        <Button x:Name="RemovePicture" Content="Remove&#xD;&#xA;meme" HorizontalAlignment="Left" Margin="265,252,0,0" VerticalAlignment="Top" Width="80" Click="RemovePicture_Click" Height="35"/>
+        <TextBox x:Name="SearchBox" HorizontalAlignment="Left" Height="20" Margin="350,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="134" TextChanged="SearchBox_TextChanged"/>
         <ComboBox x:Name="CategoriesComboBox" HorizontalAlignment="Left" Height="20" Margin="489,10,0,0" VerticalAlignment="Top" Width="95" SelectionChanged="CategoriesComboBox_SelectionChanged" SelectedIndex="0"/>
+        <Button x:Name="ResetButton" Content="Reset" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="80" Click="ResetButton_Click"/>
+        <Label Content="Status:" HorizontalAlignment="Left" Margin="95,292,0,0" VerticalAlignment="Top"/>
+        <Label Content="Chosen item id:" HorizontalAlignment="Left" Height="25" Margin="95,310,0,0" VerticalAlignment="Top" Width="94"/>
+        <Label Content="Chosen TVI id:" HorizontalAlignment="Left" Margin="95,328,0,0" VerticalAlignment="Top" Width="94"/>
+        <Label  x:Name="ItemIdLabel" Content="id" HorizontalAlignment="Left" Margin="189,310,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="TVIIdLabel" Content="id" HorizontalAlignment="Left" Margin="189,328,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
