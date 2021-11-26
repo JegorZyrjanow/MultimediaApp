@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultimediaApp.Library
 {
     public class PictureCollection : INotifyPropertyChanged
     {
         #region PropertyChangedEventHandler
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -22,14 +21,14 @@ namespace MultimediaApp.Library
 
         #endregion
 
-        private List<Picture> _collectionList = new List<Picture>();
+        private ObservableCollection<Picture> _collectionList = new ObservableCollection<Picture>();
 
         public PictureCollection()
         {
 
         }
 
-        public PictureCollection(List<Picture> Pictures)
+        public PictureCollection(ObservableCollection<Picture> Pictures)
         {
             _collectionList = Pictures;
             if (_collectionList != null)
@@ -39,32 +38,14 @@ namespace MultimediaApp.Library
                     _collectionList[i].Id = i;
                 }
             }
-            UniqueCategories();
         }
 
         // Бизнес-логика Создателя может повлиять на его внутреннее состояние.
         // Поэтому клиент должен выполнить резервное копирование состояния с
         // помощью метода save перед запуском методов бизнес-логики.
         #region Body
-        private void UniqueCategories()
-        {
-            List<string> categories = new List<string>();
-            for (int i = 0; i < _collectionList.Count; i++)
-                categories.Add(_collectionList[i].Category);
-            _uniqueCategories = categories.Distinct().ToList();
-        }
 
-        public List<string> GetUniqueCategories()
-        {
-            return _uniqueCategories;
-        }
-
-        public string GetLastCategory()
-        {
-            return _uniqueCategories.Last();
-        }
-
-        public List<Picture> GetCollection()
+        public ObservableCollection<Picture> GetCollection()
         {
             return _collectionList;
         }
@@ -111,21 +92,21 @@ namespace MultimediaApp.Library
             }
         }
 
-        public void AddRange(List<Picture> List)
-        {
-            int j = 0;
-            for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + List.Count; i++)
-                List[j++].Id = i;
-            _collectionList.AddRange(List);
-        }
+        //public void AddRange(ObservableCollection<Picture> List)
+        //{
+        //    int j = 0;
+        //    for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + List.Count; i++)
+        //        List[j++].Id = i;
+        //    _collectionList.AddRange(List);
+        //}
 
-        public void AddRange(PictureCollection Collection)
-        {
-            int j = 0;
-            for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + Collection.GetCollection().Count; i++)
-                Collection.GetCollection()[j++].Id = i;
-            _collectionList.AddRange(Collection.GetCollection());
-        }
+        //public void AddRange(PictureCollection Collection)
+        //{
+        //    int j = 0;
+        //    for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + Collection.GetCollection().Count; i++)
+        //        Collection.GetCollection()[j++].Id = i;
+        //    _collectionList.AddRange(Collection.GetCollection());
+        //}
 
 
         // Create Categories list
@@ -154,7 +135,7 @@ namespace MultimediaApp.Library
         // Сохраняет текущее состояние внутри снимка.
         public IMemento Save()
         {
-            return new CollectionMemento(this._collectionList, this._uniqueCategories);
+            return new CollectionMemento(this._collectionList);
         }
 
         // Восстанавливает состояние Создателя из объекта снимка.
@@ -165,8 +146,7 @@ namespace MultimediaApp.Library
                 throw new Exception("Unknown memento class " + memento.ToString());
             }
 
-            Tuple<List<Picture>, List<string>> tuple = memento.GetState();
-            //this._collectionList = memento.GetState();
+            this._collectionList = memento.GetState();
             //this._uniqueCategories = 
             //Console.Write($"Originator: My state has changed to: {_collection}");
         }
@@ -174,36 +154,36 @@ namespace MultimediaApp.Library
         #endregion
     }
 
-    internal class CollectionEnumerator
-    {
-        private PictureCollection _collection = new PictureCollection(null);
+    //internal class CollectionEnumerator
+    //{
+    //    private PictureCollection _collection = new PictureCollection(null);
 
-        public PictureCollection SortByName(string Name, PictureCollection Collection)
-        {
-            _collection = new PictureCollection();
+    //    public PictureCollection SortByName(string Name, PictureCollection Collection)
+    //    {
+    //        _collection = new PictureCollection();
 
-            Collection.GetCollection().ForEach(pic =>
-            {
-                if (pic.Name.ToLower().Contains(Name.ToLower()))
-                    _collection.Add(pic);
-            });
+    //        Collection.GetCollection().ForEach(pic =>
+    //        {
+    //            if (pic.Name.ToLower().Contains(Name.ToLower()))
+    //                _collection.Add(pic);
+    //        });
 
-            return _collection;
-        }
+    //        return _collection;
+    //    }
 
-        public PictureCollection SortByCategory(string Category, PictureCollection Collection)
-        {
-            _collection = new PictureCollection();
+    //    public PictureCollection SortByCategory(string Category, PictureCollection Collection)
+    //    {
+    //        _collection = new PictureCollection();
 
-            Collection.GetCollection().ForEach(pic =>
-            {
-                if (pic.Category.ToLower().Equals(Category.ToLower()))
-                    _collection.Add(pic);
-            });
+    //        Collection.GetCollection().ForEach(pic =>
+    //        {
+    //            if (pic.Category.ToLower().Equals(Category.ToLower()))
+    //                _collection.Add(pic);
+    //        });
 
-            return _collection;
-        }
-    }        
+    //        return _collection;
+    //    }
+    //}
 
     internal class CategoryEnumerator
     {
@@ -212,23 +192,21 @@ namespace MultimediaApp.Library
 
     class CollectionMemento : IMemento
     {
-        private List<Picture> _collection = new List<Picture>();
-        private List<string> _uniqueCategories = new List<string>();
+        private ObservableCollection<Picture> _collection = new ObservableCollection<Picture>();
 
         private DateTime _date; // МОЖНО ВЫВОДИТЬ ПОСЛЕДНЮЮ ДАТУ ИЗМЕНЕНИЯ
 
-        public CollectionMemento(List<Picture> MainList, List<string> CatsList)
+        public CollectionMemento(ObservableCollection<Picture> MainList)
         {
-            this._collection.AddRange(MainList);
-            this._uniqueCategories.AddRange(CatsList);
+            this._collection = MainList;
             this._date = DateTime.Now;
         }
 
         // Создатель использует этот метод, когда восстанавливает своё
         // состояние.
-        public Tuple<List<Picture>, List<string>> GetState()
+        public ObservableCollection<Picture> GetState()
         {
-            return Tuple.Create(this._collection, this._uniqueCategories);
+            return this._collection;
         }
 
         // Остальные методы используются Опекуном для отображения метаданных.
@@ -293,6 +271,6 @@ namespace MultimediaApp.Library
             }
         }
 
-        
+
     }
 }

@@ -1,24 +1,26 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿//using System.Collections.ObjectModel;
+//using System.ComponentModel;
+//using System.Runtime.CompilerServices;
 
 //namespace MultimediaApp
 //{
-//    public class PictureCollection
+//    public class PictureCollection : INotifyPropertyChanged
 //    {
-//        // Main collection
-//        private List<Picture> _collectionList = new List<Picture>();
-//        // Editable collection, showed on gallery
-//        //private List<Meme> _cacheList = new List<Meme>();
+//        #region PropertyChangedEventHandler
 
-//        public PictureCollection()
+//        public event PropertyChangedEventHandler PropertyChanged;
+
+//        public void OnPropertyChanged([CallerMemberName] string prop = "")
 //        {
-
+//            if (PropertyChanged != null)
+//                PropertyChanged(this, new PropertyChangedEventArgs(prop));
 //        }
 
-//        public PictureCollection(List<Picture> Pictures)
+//        #endregion
+
+//        private ObservableCollection<Picture> _collectionList = new ObservableCollection<Picture>();
+
+//        public PictureCollection(ObservableCollection<Picture> Pictures)
 //        {
 //            _collectionList = Pictures;
 //            if (_collectionList != null)
@@ -28,32 +30,14 @@
 //                    _collectionList[i].Id = i;
 //                }
 //            }
-//            UniqueCategories();
 //        }
 
 //        // Бизнес-логика Создателя может повлиять на его внутреннее состояние.
 //        // Поэтому клиент должен выполнить резервное копирование состояния с
 //        // помощью метода save перед запуском методов бизнес-логики.
 //        #region Body
-//        private void UniqueCategories()
-//        {
-//            List<string> categories = new List<string>();
-//            for (int i = 0; i < _collectionList.Count; i++)
-//                categories.Add(_collectionList[i].Category);
-//            _uniqueCategories = categories.Distinct().ToList();
-//        }
 
-//        public List<string> GetUniqueCategories()
-//        {
-//            return _uniqueCategories;
-//        }
-
-//        public string GetLastCategory()
-//        {
-//            return _uniqueCategories.Last();
-//        }
-
-//        public List<Picture> GetCollection()
+//        public ObservableCollection<Picture> GetCollection()
 //        {
 //            return _collectionList;
 //        }
@@ -70,8 +54,6 @@
 //            return result;
 //        }
 
-//        delegate void AddEventHandler();
-//        event AddEventHandler AddCat;
 //        public void Add(Picture Item)
 //        {
 //            int newId = _collectionList.Count; // Id counting starts from 0
@@ -100,21 +82,21 @@
 //            }
 //        }
 
-//        public void AddRange(List<Picture> List)
-//        {
-//            int j = 0;
-//            for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + List.Count; i++)
-//                List[j++].Id = i;
-//            _collectionList.AddRange(List);
-//        }
+//        //public void AddRange(ObservableCollection<Picture> List)
+//        //{
+//        //    int j = 0;
+//        //    for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + List.Count; i++)
+//        //        List[j++].Id = i;
+//        //    _collectionList.AddRange(List);
+//        //}
 
-//        public void AddRange(PictureCollection Collection)
-//        {
-//            int j = 0;
-//            for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + Collection.GetCollection().Count; i++)
-//                Collection.GetCollection()[j++].Id = i;
-//            _collectionList.AddRange(Collection.GetCollection());
-//        }
+//        //public void AddRange(PictureCollection Collection)
+//        //{
+//        //    int j = 0;
+//        //    for (int i = _collectionList.Count - 1; i < _collectionList.Count - 1 + Collection.GetCollection().Count; i++)
+//        //        Collection.GetCollection()[j++].Id = i;
+//        //    _collectionList.AddRange(Collection.GetCollection());
+//        //}
 
 
 //        // Create Categories list
@@ -129,7 +111,7 @@
 //            {
 
 //            }
-            
+
 //            static public void GetOther()
 //            {
 
@@ -141,25 +123,40 @@
 //        #region Memento
 
 //        // Сохраняет текущее состояние внутри снимка.
-//        public IMemento Save()
-//        {
-//            return new CollectionMemento(this._collectionList, this._uniqueCategories);
-//        }
 
-//        // Восстанавливает состояние Создателя из объекта снимка.
-//        public void Restore(IMemento memento)
-//        {
-//            if (!(memento is CollectionMemento))
-//            {
-//                throw new Exception("Unknown memento class " + memento.ToString());
-//            }
-
-//            Tuple<List<Picture>, List<string>> tuple = memento.GetState();
-//            //this._collectionList = memento.GetState();
-//            //this._uniqueCategories = 
-//            //Console.Write($"Originator: My state has changed to: {_collection}");
-//        }
-    
 //        #endregion
 //    }
+
+//    //internal class CollectionEnumerator
+//    //{
+//    //    private PictureCollection _collection = new PictureCollection(null);
+
+//    //    public PictureCollection SortByName(string Name, PictureCollection Collection)
+//    //    {
+//    //        _collection = new PictureCollection();
+
+//    //        Collection.GetCollection().ForEach(pic =>
+//    //        {
+//    //            if (pic.Name.ToLower().Contains(Name.ToLower()))
+//    //                _collection.Add(pic);
+//    //        });
+
+//    //        return _collection;
+//    //    }
+
+//    //    public PictureCollection SortByCategory(string Category, PictureCollection Collection)
+//    //    {
+//    //        _collection = new PictureCollection();
+
+//    //        Collection.GetCollection().ForEach(pic =>
+//    //        {
+//    //            if (pic.Category.ToLower().Equals(Category.ToLower()))
+//    //                _collection.Add(pic);
+//    //        });
+
+//    //        return _collection;
+//    //    }
+//    //}
+
+
 //}

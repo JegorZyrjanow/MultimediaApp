@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MultimediaApp
 {
@@ -21,7 +20,7 @@ namespace MultimediaApp
         {
             InitializeComponent();
 
-            this.FilePath = file;            
+            this.FilePath = file;
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
@@ -43,7 +42,7 @@ namespace MultimediaApp
             this.Close();
         }
 
-        public Picture GetMeme()
+        public Picture GetPic()
         {
             return _picture;
         }

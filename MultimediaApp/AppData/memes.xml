@@ -1,50 +1,32 @@
 <?xml version="1.0"?>
 <ArrayOfPicture xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Picture>
-    <Name>AreUHTTPqm.jpg</Name>
-    <Category>cute</Category>
-    <Id>0</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\AreUHTTPqm.jpg</Path>
-  </Picture>
-  <Picture>
-    <Name>Cheemse.jpg</Name>
-    <Category>meme</Category>
-    <Id>1</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\Cheemse.jpg</Path>
-  </Picture>
-  <Picture>
-    <Name>ZashelUvidelPobedil.jpg</Name>
-    <Category>meme</Category>
-    <Id>2</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\ZashelUvidelPobedil.jpg</Path>
-  </Picture>
-  <Picture>
-    <Name>ChristianMemes.jpg</Name>
-    <Category>meme</Category>
+    <Name>123www</Name>
+    <Category>lol2</Category>
     <Id>3</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\ChristianMemes.jpg</Path>
+    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\ChristianMemes.jpg</Path>
   </Picture>
   <Picture>
-    <Name>OrbitalBonk.jpg</Name>
-    <Category>meme</Category>
+    <Name>123321</Name>
+    <Category>lol2</Category>
     <Id>4</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\OrbitalBonk.jpg</Path>
-  </Picture>
-  <Picture>
-    <Name>YeahImAGamer.jpg</Name>
-    <Category>funny</Category>
-    <Id>5</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\YeahImAGamer.jpg</Path>
-  </Picture>
-  <Picture>
-    <Name>reiku (JPG)</Name>
-    <Category>wonder</Category>
-    <Id>6</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\reiku.jpg</Path>
+    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\reiku.jpg</Path>
   </Picture>
   <Picture>
     <Name>troll (PNG)</Name>
     <Category>wc</Category>
+    <Id>5</Id>
+    <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
+  </Picture>
+  <Picture>
+    <Name>123 (JPG)</Name>
+    <Category>new</Category>
+    <Id>6</Id>
+    <Path>C:\Users\User\Desktop\AreUHTTPqm.jpg</Path>
+  </Picture>
+  <Picture>
+    <Name>Wc3BTNHeadhunter.png</Name>
+    <Category>none</Category>
     <Id>7</Id>
     <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
   </Picture>

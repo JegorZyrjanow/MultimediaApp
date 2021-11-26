@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace MultimediaApp.Library
+namespace MultimediaApp
 {
     public class XmlFormatter
     {
