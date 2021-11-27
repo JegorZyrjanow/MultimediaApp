@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace MultimediaApp
 {
     internal class ApplicationViewModel : INotifyPropertyChanged
     {
-        private Picture _selectedPicture;
         private XmlFormatter _xmlFormatter = new XmlFormatter();
-        private ObservableCollection<Picture> _collection;
+        private ObservableCollection<Picture> _pictures;
         private Caretaker _collectionCaretaker;
+        private Picture _selectedPicture;
 
         public ObservableCollection<Picture> Collection { get; set; }
 
@@ -36,9 +37,44 @@ namespace MultimediaApp
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private ObservableCollection<string> uniqueCategories;
-        public ObservableCollection<string> UniqueCategories { get; set; }
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //different kind of changes that may have occurred in collection
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                //your code
+            }
+        }
+
+        private string _selectedCategory;
+        public string SelectedCategory
+        {
+            get { return _selectedCategory; }
+            set
+            {
+                _selectedCategory = value;
+                //OnPropertyChanged();
+            }
+        }
+        private List<string> _categories;
+        public List<string> Categories
+        {
+            get
+            {
+                return _categories;
+            }
+            set
+            {
+                _categories = value;
+                OnPropertyChanged("SelectedCategory");
+            }
+        }
         private RelayCommand addCommand;
         public RelayCommand AddCommand
         {
@@ -64,7 +100,7 @@ namespace MultimediaApp
 
                         NamingWindow namingWindow = new NamingWindow(filePath);
                         namingWindow.ShowDialog();
-                        _collection.Add(namingWindow.GetPic());
+                        _pictures.Add(namingWindow.GetPic());
                         SelectedPicture = namingWindow.GetPic();
                     }));
             }
@@ -135,13 +171,18 @@ namespace MultimediaApp
 
         public ApplicationViewModel()
         {
+            // Deserialize existing XML with list
             _xmlFormatter.Deserialize();
-            _collection = _xmlFormatter.GetCollection();
-            Collection = _collection;
+            // Init a pictures collection
+            _pictures = _xmlFormatter.GetCollection();
+            // Throw it to property
+            Collection = _pictures;
+            // Getting categories list
+            _categories = new List<string> { "All" };
+            _categories.AddRange(Collection.Select(o => o.Category).Distinct().ToList());
+            // Init Caretaker (for Undo func)
             _collectionCaretaker = new Caretaker(this);
         }
-
-        #region Memento Interface
 
         public IMemento Save()
         {
@@ -159,10 +200,7 @@ namespace MultimediaApp
             this.Collection = memento.GetState();
         }
 
-        #endregion
     }
-
-    #region Memento
 
     public interface IMemento
     {
@@ -221,8 +259,6 @@ namespace MultimediaApp
                 this.Undo();
             }
         }
-
-        #endregion
 
     }
 }
