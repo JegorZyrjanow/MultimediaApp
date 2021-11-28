@@ -1,4 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace MultimediaApp
 {
@@ -12,6 +17,24 @@ namespace MultimediaApp
             InitializeComponent();
 
             DataContext = new ApplicationViewModel();
+
+            
+        }
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void ButtonMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         #region Search
@@ -133,6 +156,7 @@ namespace MultimediaApp
         //}
 
         #endregion
-
     }
+
+    
 }

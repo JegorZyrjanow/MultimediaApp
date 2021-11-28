@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 
@@ -28,6 +29,7 @@ namespace MultimediaApp
                 _selectedPicture = value;
                 OnPropertyChanged("SelectedPicture");
                 OnPropertyChanged("BitmapImage");
+                OnPropertyChanged("SearchText");
             }
         }
 
@@ -36,8 +38,6 @@ namespace MultimediaApp
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -142,10 +142,7 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand(obj =>
-                {
-                    _collectionCaretaker.Undo();
-                }));
+                return undoCommand ?? (undoCommand = new RelayCommand( obj => _collectionCaretaker.Undo() ));
             }
         }
 
@@ -184,9 +181,89 @@ namespace MultimediaApp
             _collectionCaretaker = new Caretaker(this);
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged("SearchText");
+                ICollectionView view = CollectionViewSource.GetDefaultView(Collection.Select(o => o.Name));
+                TextSearchFilter(view, SearchText);
+
+            }
+        }
+
+        public void TextSearchFilter(ICollectionView filteredView, string searchText)
+        {
+            Collection.
+
+            //filteredView.Filter = delegate (object obj)
+            //{
+            //    if (string.IsNullOrEmpty(searchText))
+            //        return true;
+
+            //    string str = obj as string;
+            //    if (string.IsNullOrEmpty(str))
+            //        return false;
+
+            //    int index = str.IndexOf(searchText, 0, StringComparison.InvariantCultureIgnoreCase);
+
+            //    return index > -1;
+            //};
+            //filteredView.Refresh();
+        }
+
+        //private int _searchText;
+        //public int SearchText
+        //{
+        //    get { return _searchText; }
+        //    set
+        //    {
+        //        IsReadOnly = true;
+        //        _searchText = value;
+        //        OnPropertyChanged("Price");
+        //        //Do your Calculation here
+        //        IsReadOnly = false;
+        //    }
+        //}
+
+        //private bool _isReadOnly;
+        //public bool IsReadOnly
+        //{
+        //    get { return _isReadOnly; }
+        //    set
+        //    {
+        //        _isReadOnly = value;
+        //        OnPropertyChanged("IsReadOnly");
+        //    }
+        //}
+
+        //public class TextSearchFilter
+        //{
+        //    public TextSearchFilter(ICollectionView filteredView, string searchText)
+        //    {
+        //        filteredView.Filter = delegate (object obj)
+        //        {
+        //            if (string.IsNullOrEmpty(searchText))
+        //                return true;
+
+        //            string str = obj as string;
+        //            if (string.IsNullOrEmpty(str))
+        //                return false;
+
+        //            int index = str.IndexOf(searchText, 0, StringComparison.InvariantCultureIgnoreCase);
+
+        //            return index > -1;
+        //        };
+        //            filteredView.Refresh();
+        //    }
+        //}
+
         public IMemento Save()
         {
-            return new CollectionMemento(this.Collection);
+            return new CollectionMemento(Collection);
         }
 
         // Восстанавливает состояние Создателя из объекта снимка.
@@ -197,7 +274,7 @@ namespace MultimediaApp
                 throw new Exception("Unknown memento class " + memento.ToString());
             }
 
-            this.Collection = memento.GetState();
+            Collection = memento.GetState();
         }
 
     }
@@ -209,18 +286,18 @@ namespace MultimediaApp
 
     class CollectionMemento : IMemento
     {
-        private ObservableCollection<Picture> _collection = new ObservableCollection<Picture>();
+        private ObservableCollection<Picture> _collection;
 
         public CollectionMemento(ObservableCollection<Picture> MainList)
         {
-            this._collection = MainList;
+            _collection = new ObservableCollection<Picture>(MainList);
         }
 
         // Создатель использует этот метод, когда восстанавливает своё
         // состояние.
         public ObservableCollection<Picture> GetState()
         {
-            return this._collection;
+            return _collection;
         }
     }
 
@@ -232,33 +309,35 @@ namespace MultimediaApp
 
         public Caretaker(ApplicationViewModel ViewModel)
         {
-            this._viewModel = ViewModel;
+            _viewModel = ViewModel;
         }
 
         public void Backup()
         {
-            this._mementos.Add(this._viewModel.Save());
+            _mementos.Add(_viewModel.Save());
         }
 
         public void Undo()
         {
-            if (this._mementos.Count == 0)
+            if (_mementos.Count == 0)
             {
                 return;
             }
 
-            var memento = this._mementos.Last();
-            this._mementos.Remove(memento);
+            var memento = _mementos.Last();
+            _mementos.Remove(memento);
 
             try
             {
-                this._viewModel.Restore(memento);
+                _viewModel.Restore(memento);
             }
             catch (Exception)
             {
-                this.Undo();
+                Undo();
             }
         }
 
     }
+
+    
 }
