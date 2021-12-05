@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MultimediaApp" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        xmlns:local="clr-namespace:MultimediaApp"
         mc:Ignorable="d"
         Height="380" Width="600"
         WindowStyle="None"
@@ -12,13 +12,9 @@
         Background="Transparent"
         AllowsTransparency="True">
     
-        <!--
-        #000000
-        #ffffff
-        #494949
-        #7c7a7a
-        #ff5d73    
-    -->
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
 
     <Border Background="#494949">
         <Grid>
@@ -121,7 +117,8 @@
                      Width="184"
                      ItemsSource="{Binding Collection}"
                      SelectedItem="{Binding SelectedPicture}"
-                     d:ItemsSource="{d:SampleData ItemCount=2}">
+                     d:ItemsSource="{d:SampleData ItemCount=2}"
+                     BorderThickness="0">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -159,7 +156,7 @@
                     Width="395" Height="350"
                     Background="#7c7a7a"
                     Grid.Row="1" Grid.Column="1" Grid.RowSpan="4">
-                <Image Source="{Binding BitmapImage, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5,5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+                <Image Source="{Binding BitmapImage, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
             </Border>
 
             <StackPanel Orientation="Horizontal"

@@ -100,10 +100,10 @@ namespace MultimediaApp
                             return;
                         }
 
-                        NamingWindow namingWindow = new NamingWindow(filePath);
+                        NamingWindow namingWindow = new NamingWindow();
                         namingWindow.ShowDialog();
-                        _pictures.Add(namingWindow.GetPic());
-                        SelectedPicture = namingWindow.GetPic();
+                        //_pictures.Add(namingWindow.GetPic());
+                        //SelectedPicture = namingWindow.GetPic();
                     }));
             }
         }

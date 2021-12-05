@@ -10,14 +10,14 @@ namespace MultimediaApp
 {
     internal class NamingViewModel : INotifyPropertyChanged
     {
-        private Picture _picture;
-        private string _filePath;
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+
+        private Picture _picture;
+        private string _filePath;
 
         private string _name;
         public string PicName

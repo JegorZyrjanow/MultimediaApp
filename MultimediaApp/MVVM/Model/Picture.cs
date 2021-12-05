@@ -11,7 +11,9 @@ namespace MultimediaApp
         public string Path { get; set; }
         //public int Id { get; set; }
 
-        public Picture(string name, string category, string path)
+        internal Picture() { }
+
+        internal Picture(string name, string category, string path)
         {
             Name = name;
             Category = category;
