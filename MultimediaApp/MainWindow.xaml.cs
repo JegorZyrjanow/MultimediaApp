@@ -16,9 +16,7 @@ namespace MultimediaApp
         {
             InitializeComponent();
 
-            DataContext = new ApplicationViewModel();
-
-            
+            this.DataContext = new MainViewModel();            
         }
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)

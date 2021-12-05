@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace MultimediaApp
 {
@@ -7,39 +8,46 @@ namespace MultimediaApp
     /// </summary>
     public partial class NamingWindow : Window
     {
-        private Picture _picture;
-        private string FilePath;
-
         public void ShowDialog(Window owner)
         {
-            this.Owner = owner;
-            this.ShowDialog();
+            Owner = owner;
+            ShowDialog();
         }
 
-        public NamingWindow(string file)
+        public NamingWindow()
         {
             InitializeComponent();
 
-            this.FilePath = file;
+            //_filePath = file;
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            _picture = new Picture();
-
+            // Set Name from form
             if (string.IsNullOrEmpty(NameForm.Text))
-                _picture.Name = Helper.GetFileName(FilePath);
+                _name = Helper.GetFileName(_filePath);
             else
-                _picture.Name = NameForm.Text + $" ({ FilePath.Substring(FilePath.LastIndexOf('.') + 1).ToUpper() })";
+                _name = NameForm.Text + $" ({_filePath.Substring(_filePath.LastIndexOf('.') + 1).ToUpper() })";
 
-            _picture.Category = CategoryForm.Text;
+            // Set Category form form
+            _category = CategoryForm.Text;
 
-            _picture.Path = FilePath;
-
-            //File.Copy(FilePath, @"C:\Users\User\Desktop\MultimediaApp\MultimediaApp\images\memes\" + FileName);
+            // Create Pic
+            _picture = new Picture(_name, _category, _filePath);
 
             // Close window
             this.Close();
+        }
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         public Picture GetPic()

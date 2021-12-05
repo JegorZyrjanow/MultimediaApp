@@ -59,10 +59,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="MVVM\ViewModel\ApplicationViewModel.cs" />
     <Compile Include="Core\RelayCommand.cs" />
     <Compile Include="MVVM\Model\Picture.cs" />
+    <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
+    <Compile Include="MVVM\ViewModel\NamingViewModel.cs" />
     <Compile Include="PictureCollection.cs" />
+    <Compile Include="PictureListBox.cs" />
     <Compile Include="XmlFormatter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -86,7 +88,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Theme\TextboxTheme.xaml">
+    <Page Include="Theme\FormTextboxTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Theme\SearchTextboxTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,16 +127,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="readmeorwtvr\TODO.txt" />
+    <Resource Include="readme\TODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="readmeorwtvr\Structure.txt" />
+    <Resource Include="readme\Structure.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="readmeorwtvr\Fs.txt" />
+    <Resource Include="readme\Fs.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="readmeorwtvr\Other.txt" />
+    <Resource Include="readme\Other.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MVVM\View\" />

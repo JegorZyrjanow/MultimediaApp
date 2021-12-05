@@ -12,12 +12,13 @@ using System.Windows.Media.Imaging;
 
 namespace MultimediaApp
 {
-    internal class ApplicationViewModel : INotifyPropertyChanged
+    internal class MainViewModel : INotifyPropertyChanged
     {
         private XmlFormatter _xmlFormatter = new XmlFormatter();
         private ObservableCollection<Picture> _pictures;
         private Caretaker _collectionCaretaker;
         private Picture _selectedPicture;
+        private ICollectionView _view;
 
         public ObservableCollection<Picture> Collection { get; set; }
 
@@ -59,9 +60,10 @@ namespace MultimediaApp
             set
             {
                 _selectedCategory = value;
-                //OnPropertyChanged();
+                OnPropertyChanged("SelectedCategory");
             }
         }
+
         private List<string> _categories;
         public List<string> Categories
         {
@@ -72,9 +74,9 @@ namespace MultimediaApp
             set
             {
                 _categories = value;
-                OnPropertyChanged("SelectedCategory");
             }
         }
+
         private RelayCommand addCommand;
         public RelayCommand AddCommand
         {
@@ -142,8 +144,13 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand( obj => _collectionCaretaker.Undo() ));
+                return undoCommand ?? (undoCommand = new RelayCommand(obj => _collectionCaretaker.Undo()));
             }
+        }
+
+        private void collectionChanged()
+        {
+
         }
 
         public BitmapImage BitmapImage
@@ -166,17 +173,24 @@ namespace MultimediaApp
             }
         }
 
-        public ApplicationViewModel()
+        public MainViewModel()
         {
             // Deserialize existing XML with list
             _xmlFormatter.Deserialize();
+
             // Init a pictures collection
             _pictures = _xmlFormatter.GetCollection();
+
             // Throw it to property
             Collection = _pictures;
+            _view = CollectionViewSource.GetDefaultView(Collection);
+            _view.Filter = new Predicate<object>(item => Filter(item as Picture));
+
             // Getting categories list
             _categories = new List<string> { "All" };
             _categories.AddRange(Collection.Select(o => o.Category).Distinct().ToList());
+            _categories = _categories.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+
             // Init Caretaker (for Undo func)
             _collectionCaretaker = new Caretaker(this);
         }
@@ -187,17 +201,84 @@ namespace MultimediaApp
             get { return _searchText; }
             set
             {
-                _searchText = value;
-                OnPropertyChanged("SearchText");
-                ICollectionView view = CollectionViewSource.GetDefaultView(Collection.Select(o => o.Name));
-                TextSearchFilter(view, SearchText);
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged("SearchText");
 
+                    //==
+                    _view.Filter = new Predicate<object>(item => Filter(item as Picture));
+                    _view.Refresh();
+
+                    OnPropertyChanged("Collection");
+                    // ==
+
+                    FilteredView.Refresh();
+                }
+            }
+        }
+
+        public ICollectionView FilteredView { get; private set; }
+
+        private bool Filter(Picture pic)
+        {
+            return _searchText == null || pic.Name.Contains(_searchText);
+        }
+
+        private void SearchTextChanged(string text)
+        {
+            // Here is the lambda with your conditions to filter
+            //_view.Filter = (o) => { return o; };
+
+            _view.Filter = delegate (object item)
+            {
+                return ((Picture)item).Name.Contains(_searchText);
+            };
+
+            Collection.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+            _view.Refresh();
+        }
+
+        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //different kind of changes that may have occurred in collection
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //_view.Filter = delegate (object item)
+                //{
+                //    return ((Picture)item).Name.Contains(_searchText);
+                //};
+            }
+            if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                //your code
+            }
+        }
+
+        private RelayCommand _eventSearch;
+        public RelayCommand EventSearch
+        {
+            get
+            {
+                return _eventSearch ?? (_eventSearch = new RelayCommand(obj =>
+                {
+                    //var eventList = await App.MobileService.GetTable<Event>().ToListAsync();
+
+                }));
             }
         }
 
         public void TextSearchFilter(ICollectionView filteredView, string searchText)
         {
-            Collection.
+            //Collection.
 
             //filteredView.Filter = delegate (object obj)
             //{
@@ -274,7 +355,11 @@ namespace MultimediaApp
                 throw new Exception("Unknown memento class " + memento.ToString());
             }
 
-            Collection = memento.GetState();
+            Collection.Clear();
+            foreach (var item in memento.GetState())
+            {
+                Collection.Add(item);
+            }
         }
 
     }
@@ -305,9 +390,9 @@ namespace MultimediaApp
     {
         private List<IMemento> _mementos = new List<IMemento>();
 
-        private ApplicationViewModel _viewModel;
+        private MainViewModel _viewModel;
 
-        public Caretaker(ApplicationViewModel ViewModel)
+        public Caretaker(MainViewModel ViewModel)
         {
             _viewModel = ViewModel;
         }
@@ -339,5 +424,5 @@ namespace MultimediaApp
 
     }
 
-    
+
 }

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MultimediaApp" d:DataContext="{d:DesignInstance Type=local:ApplicationViewModel}"
+        xmlns:local="clr-namespace:MultimediaApp" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Height="380" Width="600"
         WindowStyle="None"
@@ -11,12 +11,8 @@
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         AllowsTransparency="True">
-
-    <Window.DataContext>
-        <local:ApplicationViewModel/>
-    </Window.DataContext>
-
-    <!--
+    
+        <!--
         #000000
         #ffffff
         #494949
@@ -25,7 +21,7 @@
     -->
 
     <Border Background="#494949">
-        <Grid Margin="0,0,0,0">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="400"/>
@@ -53,10 +49,14 @@
                           Width="68"
                           Padding="0,2,0,0">
                         <MenuItem Header="File">
-                            <MenuItem Header="Save" Command="{Binding SaveCommand}" />
+                            <MenuItem Header="Overwrite XML"
+                                      Foreground="Black"
+                                      Command="{Binding SaveCommand}" />
                         </MenuItem>
                         <MenuItem Header="Edit">
-                            <MenuItem Header="Undo" Command="{Binding UndoCommand}" />
+                            <MenuItem Header="Undo"
+                                      Foreground="Black"
+                                      Command="{Binding UndoCommand}" />
                         </MenuItem>
                     </Menu>
 
@@ -75,7 +75,7 @@
                                 Content="❌"
                                 Padding="0,0,0,1.47"
                                 FontSize="10.5"
-                                Foreground="White"
+                                Foreground="#ff5d73"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 Click="CloseButton_Click"/>
@@ -115,38 +115,49 @@
             </TreeView.Resources>
         </TreeView>-->
 
-            <ListBox ItemsSource="{Binding Collection, Mode=TwoWay}"
-                     SelectedItem="{Binding SelectedPicture}"                     
+            <ListBox Background="#7c7a7a"
                      Grid.Row="2"
-                     Margin="8,3,0,3"
-                     BorderBrush="{x:Null}">
+                     HorizontalAlignment="Center"
+                     Width="184"
+                     ItemsSource="{Binding Collection}"
+                     SelectedItem="{Binding SelectedPicture}"
+                     d:ItemsSource="{d:SampleData ItemCount=2}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <Image x:Name="Image" Width="32" Height="32" Margin="1" Source="{Binding Path=Path}"/>
                             <StackPanel>
-                                <TextBlock Text="{Binding Path=Name}" Margin="3,0,0,0" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="Category" Text="{Binding Path=Category}"/>
+                                <TextBlock Margin="3,0,0,0"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding Path=Name}"/>
+                                <TextBlock x:Name="Category"
+                                           Margin="3,0,0,0"
+                                           Text="{Binding Path=Category}"/>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Visibility" Value="{Binding Path=Vis}" />
+                    </Style>
+                </ListBox.Resources>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
+                            <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
-                            <!--<Trigger>
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </Trigger>-->
-                            <DataTrigger Binding="{Binding ElementName=Category, Path=Text}" Value="" >
-                                <Setter Property="Visibility" Value="Visible"/>
+                            <DataTrigger Binding="{Binding ElementName=SearchText, Path=Text}" >
+                                <Setter Property="Visibility" Value="{Binding Path=Vis}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
 
-            <Border Margin="5,5,5,5"
-                    Background="white"
+            <Border HorizontalAlignment="Left"
+                    Width="395" Height="350"
+                    Background="#7c7a7a"
                     Grid.Row="1" Grid.Column="1" Grid.RowSpan="4">
                 <Image Source="{Binding BitmapImage, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5,5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
             </Border>
@@ -175,15 +186,15 @@
 
             <ComboBox x:Name="ComboBoxCategories"
                       Grid.Row="3"
-                      Width="94"
+                      Width="92"
                       HorizontalAlignment="Right"
                       ItemsSource="{Binding Categories, UpdateSourceTrigger=PropertyChanged}"
                       SelectedItem="{Binding SelectedCategory}"
-                      Margin="0,4,5,4"/>
+                      Margin="0,4,8,4"/>
 
             <TextBox x:Name="SearchBox"
                      Grid.Row="1"
-                     Style="{StaticResource MyTextbox}"
+                     Style="{StaticResource SearchTextbox}"
                      Text="{Binding SearchText,
                             Mode=TwoWay,
                             UpdateSourceTrigger=PropertyChanged}"/>

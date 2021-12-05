@@ -5,29 +5,34 @@
     <Category>lol2</Category>
     <Id>3</Id>
     <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\ChristianMemes.jpg</Path>
+    <Vis>Visible</Vis>
   </Picture>
   <Picture>
     <Name>123321</Name>
     <Category>lol2</Category>
     <Id>4</Id>
     <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\reiku.jpg</Path>
+    <Vis>Visible</Vis>
   </Picture>
   <Picture>
     <Name>troll (PNG)</Name>
     <Category>wc</Category>
     <Id>5</Id>
     <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
+    <Vis>Visible</Vis>
   </Picture>
   <Picture>
     <Name>123 (JPG)</Name>
     <Category>new</Category>
     <Id>6</Id>
     <Path>C:\Users\User\Desktop\AreUHTTPqm.jpg</Path>
+    <Vis>Visible</Vis>
   </Picture>
   <Picture>
-    <Name>Wc3BTNHeadhunter.png</Name>
-    <Category>none</Category>
-    <Id>7</Id>
-    <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
+    <Name>oknomnezapili (JPG)</Name>
+    <Category />
+    <Id>0</Id>
+    <Path>C:\Users\User\Desktop\rainy-aesthetic-pastel-sky-rainy-days-Favim.com-6593845.jpg</Path>
+    <Vis>Visible</Vis>
   </Picture>
 </ArrayOfPicture>

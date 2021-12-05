@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace MultimediaApp
 {
@@ -7,7 +8,14 @@ namespace MultimediaApp
     {
         public string Name { get; set; }
         public string Category { get; set; }
-        public int Id { get; set; }
         public string Path { get; set; }
+        //public int Id { get; set; }
+
+        public Picture(string name, string category, string path)
+        {
+            Name = name;
+            Category = category;
+            Path = path;
+        }
     }
 }

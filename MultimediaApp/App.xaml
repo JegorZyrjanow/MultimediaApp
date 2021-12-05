@@ -6,7 +6,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Theme/TextboxTheme.xaml"/>
+                <ResourceDictionary Source="Theme/SearchTextboxTheme.xaml"/>
+                <ResourceDictionary Source="Theme/FormTextboxTheme.xaml"/>
                 <ResourceDictionary Source="Theme/ComboboxTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

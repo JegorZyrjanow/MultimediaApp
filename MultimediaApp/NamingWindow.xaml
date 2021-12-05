@@ -3,18 +3,94 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MultimediaApp"
+        xmlns:local="clr-namespace:MultimediaApp" d:DataContext="{d:DesignInstance Type=local:NamingViewModel}"
         mc:Ignorable="d"
-        Title=" Give the picture a name" Height="159" Width="204"
+        Height="112" Width="220"
+        WindowStyle="None"
+        ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
-        SizeToContent="WidthAndHeight">
-    <Grid>
-        <TextBox x:Name="NameForm" HorizontalAlignment="Left" Height="20" Margin="59,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
-        <TextBox x:Name="CategoryForm" HorizontalAlignment="Left" Height="20" Margin="103,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="83"/>
-        <Button x:Name="Done" Content="Done!" HorizontalAlignment="Left" Height="21" Margin="132,88,10,10" VerticalAlignment="Top" Width="54" Click="Done_Click"/>
-        <Label Content="Name:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="30" Width="44"/>
-        <Label Content="Set a category:" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Height="30" Width="88"/>
+        Background="Transparent"
+        AllowsTransparency="True">
 
-    </Grid>
+    <Window.DataContext>
+        <local:NamingViewModel/>
+    </Window.DataContext>
+    
+    <!--
+        #000000
+        #ffffff
+        #494949
+        #7c7a7a
+        #ff5d73    
+    -->
+
+    <Border Background="#494949">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+            <Border Background="Black"
+                    MouseDown="Border_MouseDown">
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Label Content=""
+                           Foreground="White"
+                           FontWeight="SemiBold"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <Button Width="20" Height="20"
+                                Content="❌"
+                                Padding="0,0,0,1.47"
+                                FontSize="10.5"
+                                Foreground="#ff5d73"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <TextBox x:Name="NameForm"
+                     Grid.Row="1"
+                     HorizontalAlignment="Left"
+                     Margin="75,2.5,0,2.5"
+                     Width="140"
+                     Style="{StaticResource FormTextbox}"
+                     Text="{Binding Name}" />
+            <TextBox x:Name="CategoryForm"
+                     Grid.Row="2"
+                     HorizontalAlignment="Left"
+                     Margin="75,2.5,0,2.5"
+                     Width="140"
+                     Style="{StaticResource FormTextbox}"
+                     Text="{Binding Category}"/>
+            <Button Content="Add"
+                    Height="20"
+                    Margin="5,0,5,0"
+                    Foreground="White"
+                    Background="Transparent"
+                    BorderThickness="0.7" Grid.Row="3"
+                    Command="{Binding GetCommand}"/>
+            <Label Content="Name:"
+                   Foreground="White"
+                   Margin="21,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Height="30" Width="44"                   
+                   Grid.Row="1"/>
+            <Label Content="Category:"
+                   Foreground="White"
+                   Margin="5,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Height="30" Width="60"
+                   Grid.Row="2"/>
+        </Grid>
+    </Border>
+
 </Window>
