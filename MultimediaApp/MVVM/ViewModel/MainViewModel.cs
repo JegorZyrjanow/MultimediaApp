@@ -14,14 +14,10 @@ namespace MultimediaApp
 {
     internal class MainViewModel : INotifyPropertyChanged
     {
-        private XmlFormatter _xmlFormatter = new XmlFormatter();
-        private ObservableCollection<Picture> _pictures;
-        private Caretaker _collectionCaretaker;
+        //private ICollectionView _view;
+        public ObservableCollection<Picture> Pictures { get; set; }
+
         private Picture _selectedPicture;
-        private ICollectionView _view;
-
-        public ObservableCollection<Picture> Collection { get; set; }
-
         public Picture SelectedPicture
         {
             get { return _selectedPicture; }
@@ -85,25 +81,7 @@ namespace MultimediaApp
                 return addCommand ??
                     (addCommand = new RelayCommand(obj =>
                     {
-                        _collectionCaretaker.Backup();
-
-                        OpenFileDialog openFileDialog = new OpenFileDialog();
-                        openFileDialog.Filter = "Image Files| *.jpg; *.jpeg; *.png;";
-                        if (openFileDialog.ShowDialog() == DialogResult.Cancel)
-                            return;
-                        string filePath = openFileDialog.FileName;
-
-                        List<string> _imageExtensions = new List<string>() { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-                        if (!_imageExtensions.Contains(Path.GetExtension(filePath).ToUpperInvariant()))
-                        {
-                            System.Windows.MessageBox.Show("I don\'t get it..");
-                            return;
-                        }
-
-                        NamingWindow namingWindow = new NamingWindow();
-                        namingWindow.ShowDialog();
-                        //_pictures.Add(namingWindow.GetPic());
-                        //SelectedPicture = namingWindow.GetPic();
+                        // AddPicture from Manager
                     }));
             }
         }
@@ -115,15 +93,9 @@ namespace MultimediaApp
             {
                 return removeCommand ?? (removeCommand = new RelayCommand(obj =>
                 {
-                    _collectionCaretaker.Backup();
-
-                    Picture pic = obj as Picture;
-                    if (pic != null)
-                    {
-                        Collection.Remove(pic);
-                    }
+                    // Remove from Manager class
                 },
-                (obj) => Collection.Count > 0));
+                (obj) => Pictures.Count > 0));
             }
         }
 
@@ -132,10 +104,7 @@ namespace MultimediaApp
         {
             get
             {
-                return saveCommand ?? (saveCommand = new RelayCommand(obj =>
-                {
-                    _xmlFormatter.Serialize(Collection);
-                }));
+                return saveCommand ?? (saveCommand = new RelayCommand(obj => ));
             }
         }
 
@@ -144,7 +113,7 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand(obj => _collectionCaretaker.Undo()));
+                return undoCommand ?? (undoCommand = new RelayCommand(obj => ));
             }
         }
 
@@ -182,62 +151,62 @@ namespace MultimediaApp
             _pictures = _xmlFormatter.GetCollection();
 
             // Throw it to property
-            Collection = _pictures;
-            _view = CollectionViewSource.GetDefaultView(Collection);
-            _view.Filter = new Predicate<object>(item => Filter(item as Picture));
+            Pictures = _pictures;
+            //_view = CollectionViewSource.GetDefaultView(Pictures);
+            //_view.Filter = new Predicate<object>(item => Filter(item as Picture));
 
             // Getting categories list
             _categories = new List<string> { "All" };
-            _categories.AddRange(Collection.Select(o => o.Category).Distinct().ToList());
+            _categories.AddRange(Pictures.Select(o => o.Category).Distinct().ToList());
             _categories = _categories.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
 
             // Init Caretaker (for Undo func)
             _collectionCaretaker = new Caretaker(this);
         }
 
-        private string _searchText;
-        public string SearchText
-        {
-            get { return _searchText; }
-            set
-            {
-                if (_searchText != value)
-                {
-                    _searchText = value;
-                    OnPropertyChanged("SearchText");
+        //private string _searchText;
+        //public string SearchText
+        //{
+        //    get { return _searchText; }
+        //    set
+        //    {
+        //        if (_searchText != value)
+        //        {
+        //            _searchText = value;
+        //            OnPropertyChanged("SearchText");
 
-                    //==
-                    _view.Filter = new Predicate<object>(item => Filter(item as Picture));
-                    _view.Refresh();
+        //            //==
+        //            _view.Filter = new Predicate<object>(item => Filter(item as Picture));
+        //            _view.Refresh();
 
-                    OnPropertyChanged("Collection");
-                    // ==
+        //            OnPropertyChanged("Collection");
+        //            // ==
 
-                    FilteredView.Refresh();
-                }
-            }
-        }
+        //            FilteredView.Refresh();
+        //        }
+        //    }
+        //}
 
         public ICollectionView FilteredView { get; private set; }
 
-        private bool Filter(Picture pic)
-        {
-            return _searchText == null || pic.Name.Contains(_searchText);
-        }
+        //private bool Filter(Picture pic)
+        //{
+        //    return _searchText == null || pic.Name.Contains(_searchText);
+        //}
 
-        private void SearchTextChanged(string text)
-        {
-            // Here is the lambda with your conditions to filter
-            //_view.Filter = (o) => { return o; };
+        //private void SearchTextChanged(string text)
+        //{
+        //    // Here is the lambda with your conditions to filter
+        //    //_view.Filter = (o) => { return o; };
 
-            _view.Filter = delegate (object item)
-            {
-                return ((Picture)item).Name.Contains(_searchText);
-            };
+        //    _view.Filter = delegate (object item)
+        //    {
+        //        return ((Picture)item).Name.Contains(_searchText);
+        //    };
 
-            Collection.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
-            _view.Refresh();
-        }
+        //    Pictures.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+        //    _view.Refresh();
+        //}
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -341,88 +310,5 @@ namespace MultimediaApp
         //            filteredView.Refresh();
         //    }
         //}
-
-        public IMemento Save()
-        {
-            return new CollectionMemento(Collection);
-        }
-
-        // Восстанавливает состояние Создателя из объекта снимка.
-        public void Restore(IMemento memento)
-        {
-            if (!(memento is CollectionMemento))
-            {
-                throw new Exception("Unknown memento class " + memento.ToString());
-            }
-
-            Collection.Clear();
-            foreach (var item in memento.GetState())
-            {
-                Collection.Add(item);
-            }
-        }
-
     }
-
-    public interface IMemento
-    {
-        ObservableCollection<Picture> GetState();
-    }
-
-    class CollectionMemento : IMemento
-    {
-        private ObservableCollection<Picture> _collection;
-
-        public CollectionMemento(ObservableCollection<Picture> MainList)
-        {
-            _collection = new ObservableCollection<Picture>(MainList);
-        }
-
-        // Создатель использует этот метод, когда восстанавливает своё
-        // состояние.
-        public ObservableCollection<Picture> GetState()
-        {
-            return _collection;
-        }
-    }
-
-    class Caretaker
-    {
-        private List<IMemento> _mementos = new List<IMemento>();
-
-        private MainViewModel _viewModel;
-
-        public Caretaker(MainViewModel ViewModel)
-        {
-            _viewModel = ViewModel;
-        }
-
-        public void Backup()
-        {
-            _mementos.Add(_viewModel.Save());
-        }
-
-        public void Undo()
-        {
-            if (_mementos.Count == 0)
-            {
-                return;
-            }
-
-            var memento = _mementos.Last();
-            _mementos.Remove(memento);
-
-            try
-            {
-                _viewModel.Restore(memento);
-            }
-            catch (Exception)
-            {
-                Undo();
-            }
-        }
-
-    }
-
-
 }

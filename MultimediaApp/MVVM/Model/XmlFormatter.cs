@@ -6,14 +6,14 @@ namespace MultimediaApp
 {
     public class XmlFormatter
     {
-        private ObservableCollection<Picture> PicturesList;
-        private XmlSerializer formatter = new XmlSerializer(typeof(ObservableCollection<Picture>));
+        private ObservableCollection<Picture> _picturesList;
+        private readonly XmlSerializer _formatter = new XmlSerializer(typeof(ObservableCollection<Picture>));
 
         public void Deserialize()
         {
             using (FileStream fs = new FileStream("../../AppData/memes.xml", FileMode.OpenOrCreate))
             {
-                PicturesList = (ObservableCollection<Picture>)formatter.Deserialize(fs);
+                _picturesList = (ObservableCollection<Picture>)_formatter.Deserialize(fs);
             }
         }
 
@@ -21,13 +21,13 @@ namespace MultimediaApp
         {
             using (FileStream fileStream = new FileStream("../../AppData/memes.xml", FileMode.Create))
             {
-                formatter.Serialize(fileStream, pictures);
+                _formatter.Serialize(fileStream, pictures);
             }
         }
 
         public ObservableCollection<Picture> GetCollection()
         {
-            return PicturesList;
+            return _picturesList;
         }
 
         //public void RecieveList(ObservableCollection<Picture> List)

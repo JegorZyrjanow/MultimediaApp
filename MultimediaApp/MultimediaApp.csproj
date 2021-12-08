@@ -63,12 +63,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\RelayCommand.cs" />
+    <Compile Include="MVVM\Model\Container.cs" />
     <Compile Include="MVVM\Model\Picture.cs" />
+    <Compile Include="MVVM\Model\PicturesGalleryManager.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
     <Compile Include="MVVM\ViewModel\NamingViewModel.cs" />
-    <Compile Include="PictureCollection.cs" />
-    <Compile Include="PictureListBox.cs" />
-    <Compile Include="XmlFormatter.cs" />
+    <Compile Include="NOTUSED\PictureCollection.cs" />
+    <Compile Include="NOTUSED\PictureListBox.cs" />
+    <Compile Include="MVVM\Model\XmlFormatter.cs" />
     <Page Include="MVVM\View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -77,8 +79,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HeaderToImageConverter.cs" />
-    <Compile Include="Helper.cs" />
+    <Compile Include="NOTUSED\HeaderToImageConverter.cs" />
+    <Compile Include="NOTUSED\Helper.cs" />
     <Compile Include="MVVM\View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

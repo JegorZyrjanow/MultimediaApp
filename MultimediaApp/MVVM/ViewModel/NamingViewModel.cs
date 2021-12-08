@@ -1,10 +1,12 @@
-﻿using System;
+﻿using MultimediaApp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MultimediaApp
 {
@@ -19,18 +21,18 @@ namespace MultimediaApp
         private Picture _picture;
         private string _filePath;
 
-        private string _name;
+        private string _picName;
         public string PicName
         {
             get
             {
-                return _name;
+                return _picName;
             }
             set
             {
-                if (_name != value)
+                if (_picName != value)
                 {
-                    _name = value;
+                    _picName = value;
                 }
             }
         }
@@ -51,7 +53,19 @@ namespace MultimediaApp
             }
         }
 
-        public Picture GetCommand()
+        private RelayCommand getCommand; 
+        public RelayCommand GetCommand
+        {
+            get
+            {
+                return getCommand ?? (getCommand = new RelayCommand(obj =>
+                {
+                    
+                }));
+            }
+        }
+
+        private Picture GetPic(Picture picture)
         {
             return _picture;
         }

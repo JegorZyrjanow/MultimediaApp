@@ -115,7 +115,7 @@
                      Grid.Row="2"
                      HorizontalAlignment="Center"
                      Width="184"
-                     ItemsSource="{Binding Collection}"
+                     ItemsSource="{Binding Pictures}"
                      SelectedItem="{Binding SelectedPicture}"
                      d:ItemsSource="{d:SampleData ItemCount=2}"
                      BorderThickness="0">

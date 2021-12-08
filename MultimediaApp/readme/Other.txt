@@ -1,27 +1,7 @@
-﻿
-class XmlFormatter
-│	- memesList : List<Meme>
-│	- formatter : XmlSerializer
-│	
-│	+ Deserialize() : List<Meme>
-│	+ Serialize(List<Meme>)
-│	
-└───────────────────────────────────────
-class Helper
-│	+ GetFileName(string)
-│	
-└───────────────────────────────────────
-class PicEnumerator
-│	- list : List<string>
-│	- doc : XmlDocument
-│
-│	+ GetFileName(string) : List<string>
-│
-└───────────────────────────────────────
-class Meme
-│	- Name : string
-│	- Id : string
-│	- Category : string
-│	- Uri : string
-│	
-└───────────────────────────────────────
+﻿При запуске десериалайз
+
+депенденси: как внедрять сервис в вм?
+
+кейртейкер: внедрение сервиса туда тоже, для отката (undo)
+
+КАК СДЕЛАТЬ КОНТЕЙНЕР

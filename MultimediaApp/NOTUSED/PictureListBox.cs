@@ -12,7 +12,7 @@ namespace MultimediaApp
     internal class PictureListBox : UserControl
     {
         public static readonly DependencyProperty DataSource = DependencyProperty.Register(nameof(PictureCollection), typeof(ObservableCollection<Picture>), typeof(PictureListBox), new PropertyMetadata());
-        
+
         public ObservableCollection<Picture> PictureCollection
         {
             get => (ObservableCollection<Picture>)GetValue(DataSource);
