@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,6 +11,7 @@ namespace MultimediaApp.MVVM.Model
     internal sealed class GalleryService : IGalleryService
     {
         private ObservableCollection<Picture> _pictures;
+        public ObservableCollection<Picture> Pictures { get { return _pictures; } }
         private List<string> _tags;
 
         private ObservableCollection<Picture> _filteredPictures = new ObservableCollection<Picture>();
@@ -17,7 +19,29 @@ namespace MultimediaApp.MVVM.Model
         private readonly XmlFormatter _xmlFormatter = new XmlFormatter();
         //private GalleryCaretaker _collectionCaretaker = new GalleryCaretaker(this);
 
-        // mb Constructor
+        // Event                
+        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            //different kind of changes that may have occurred in collection
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                //your code
+            }
+            if (e.Action == NotifyCollectionChangedAction.Move)
+            {
+                //your code
+            }
+        }
+
+        // Methods
         public void Add()
         {
             //_collectionCaretaker.Backup();
@@ -101,6 +125,7 @@ namespace MultimediaApp.MVVM.Model
         public void SetExistingCollectionFromXml()
         {
             _pictures = _xmlFormatter.Deserialize();
+            //_pictures.CollectionChanged += CollectionChangedMethod;
         }
 
         public void SetTags()
@@ -112,10 +137,7 @@ namespace MultimediaApp.MVVM.Model
             _tags = _tags.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
         }
 
-        private GalleryService()
-        {
-
-        }
+        private GalleryService() { }
         private static GalleryService _instance;
         public static GalleryService GetInstance()
         {
@@ -131,7 +153,7 @@ namespace MultimediaApp.MVVM.Model
         // Восстанавливает состояние Создателя из объекта снимка.
         public void Restore(IMemento memento)
         {
-            if (!(memento is GalleryService))
+            if (!(memento is GalleryServiceMemento))
             {
                 throw new Exception("Unknown memento class " + memento.ToString());
             }

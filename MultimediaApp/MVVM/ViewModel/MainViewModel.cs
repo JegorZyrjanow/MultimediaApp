@@ -12,14 +12,15 @@ namespace MultimediaApp
 {
     internal class MainViewModel : INotifyPropertyChanged
     {
-        GalleryService _galleryManager;
+        readonly GalleryService _galleryService;
         public MainViewModel()
         {
-            _galleryManager = GalleryService.GetInstance();
-            _galleryManager.SetExistingCollectionFromXml();
-            _galleryManager.SetTags();
+            _galleryService = GalleryService.GetInstance();
+            _galleryService.SetExistingCollectionFromXml();
+            _galleryService.SetTags();
+            _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
 
-            foreach (var item in _galleryManager.GetAll())
+            foreach (var item in _galleryService.GetAll())
             {
                 _pictures.Add(item);
             }
@@ -31,6 +32,16 @@ namespace MultimediaApp
 
             //_view = CollectionViewSource.GetDefaultView(Pictures);
             //_view.Filter = new Predicate<object>(item => Filter(item as Picture));
+        }
+
+        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Different kind of changes that may have occurred in collection            
+            if (e.Action == NotifyCollectionChangedAction.Add
+                || e.Action == NotifyCollectionChangedAction.Replace
+                || e.Action == NotifyCollectionChangedAction.Remove
+                || e.Action == NotifyCollectionChangedAction.Move)
+                OnPropertyChanged("Pictures");
         }
 
         private ObservableCollection<Picture> _pictures = new ObservableCollection<Picture>();
@@ -98,7 +109,7 @@ namespace MultimediaApp
         {
             get
             {
-                return addCommand ?? (addCommand = new RelayCommand(obj => _galleryManager.Add()));
+                return addCommand ?? (addCommand = new RelayCommand(obj => _galleryService.Add()));
             }
         }
 
@@ -107,7 +118,7 @@ namespace MultimediaApp
         {
             get
             {
-                return removeCommand ?? (removeCommand = new RelayCommand(obj => _galleryManager.Remove(_selectedPicture.Id),
+                return removeCommand ?? (removeCommand = new RelayCommand(obj => _galleryService.Remove(_selectedPicture.Id),
                 (obj) => Pictures.Count > 0));
             }
         }
@@ -117,7 +128,7 @@ namespace MultimediaApp
         {
             get
             {
-                return saveCommand ?? (saveCommand = new RelayCommand(obj => _galleryManager.SaveToXml()));
+                return saveCommand ?? (saveCommand = new RelayCommand(obj => _galleryService.SaveToXml()));
             }
         }
 
@@ -126,7 +137,7 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand(obj => _galleryManager.Undo()));
+                return undoCommand ?? (undoCommand = new RelayCommand(obj => _galleryService.Undo()));
             }
         }
 
@@ -197,30 +208,6 @@ namespace MultimediaApp
         //    Pictures.CollectionChanged += new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
         //    _view.Refresh();
         //}
-
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //different kind of changes that may have occurred in collection
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                //_view.Filter = delegate (object item)
-                //{
-                //    return ((Picture)item).Name.Contains(_searchText);
-                //};
-            }
-            if (e.Action == NotifyCollectionChangedAction.Replace)
-            {
-                //your code
-            }
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                //your code
-            }
-            if (e.Action == NotifyCollectionChangedAction.Move)
-            {
-                //your code
-            }
-        }
 
         //private RelayCommand _eventSearch;
         //public RelayCommand EventSearch
