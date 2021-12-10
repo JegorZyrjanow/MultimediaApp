@@ -6,41 +6,35 @@ using System.Threading.Tasks;
 
 namespace MultimediaApp.MVVM.Model
 {
-    internal class Caretaker
+    internal class GalleryCaretaker
     {
-        private List<IMemento> _mementos = new List<IMemento>();
+        private readonly List<IMemento> _mementos = new List<IMemento>();
+        private readonly GalleryService _galleryService; // Dependency
 
-        private MainViewModel _viewModel; // Dependency
-
-        public Caretaker(MainViewModel ViewModel)
+        public GalleryCaretaker(GalleryService galleryService)
         {
-            _viewModel = ViewModel;
+            _galleryService = galleryService;
         }
 
         public void Backup()
         {
-            _mementos.Add(_viewModel.Save());
+            _mementos.Add(_galleryService.Save());
         }
 
         public void Undo()
         {
             if (_mementos.Count == 0)
-            {
                 return;
-            }
-
             var memento = _mementos.Last();
             _mementos.Remove(memento);
-
             try
             {
-                _viewModel.Restore(memento);
+                _galleryService.Restore(memento);
             }
             catch (Exception)
             {
                 Undo();
             }
         }
-
     }
 }

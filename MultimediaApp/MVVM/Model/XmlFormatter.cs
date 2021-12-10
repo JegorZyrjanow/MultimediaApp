@@ -9,12 +9,14 @@ namespace MultimediaApp
         private ObservableCollection<Picture> _picturesList;
         private readonly XmlSerializer _formatter = new XmlSerializer(typeof(ObservableCollection<Picture>));
 
-        public void Deserialize()
+        public ObservableCollection<Picture> Deserialize()
         {
             using (FileStream fs = new FileStream("../../AppData/memes.xml", FileMode.OpenOrCreate))
             {
                 _picturesList = (ObservableCollection<Picture>)_formatter.Deserialize(fs);
             }
+
+            return _picturesList;
         }
 
         public void Serialize(ObservableCollection<Picture> pictures)
@@ -25,10 +27,10 @@ namespace MultimediaApp
             }
         }
 
-        public ObservableCollection<Picture> GetCollection()
-        {
-            return _picturesList;
-        }
+        //public ObservableCollection<Picture> GetCollection()
+        //{
+        //    return _picturesList;
+        //}
 
         //public void RecieveList(ObservableCollection<Picture> List)
         //{

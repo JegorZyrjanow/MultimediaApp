@@ -1,21 +1,47 @@
-﻿using System;
+﻿using MultimediaApp.MVVM.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+
 
 namespace MultimediaApp
 {
     internal class MainViewModel : INotifyPropertyChanged
     {
-        //private ICollectionView _view;
-        public ObservableCollection<Picture> Pictures { get; set; }
+        GalleryService _galleryManager;
+        public MainViewModel()
+        {
+            _galleryManager = GalleryService.GetInstance();
+            _galleryManager.SetExistingCollectionFromXml();
+            _galleryManager.SetTags();
+
+            foreach (var item in _galleryManager.GetAll())
+            {
+                _pictures.Add(item);
+            }
+            
+            // Getting categories list
+            //_categories = new List<string> { "All" };
+            //_categories.AddRange(Pictures.Select(o => o.Category).Distinct().ToList());
+            //_categories = _categories.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+
+            //_view = CollectionViewSource.GetDefaultView(Pictures);
+            //_view.Filter = new Predicate<object>(item => Filter(item as Picture));
+        }
+
+        private ObservableCollection<Picture> _pictures = new ObservableCollection<Picture>();
+        public ObservableCollection<Picture> Pictures
+        {
+            get { return _pictures; }
+            set
+            {
+                _pictures = value;
+            }   
+        }
 
         private Picture _selectedPicture;
         public Picture SelectedPicture
@@ -28,12 +54,6 @@ namespace MultimediaApp
                 OnPropertyChanged("BitmapImage");
                 OnPropertyChanged("SearchText");
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -78,11 +98,7 @@ namespace MultimediaApp
         {
             get
             {
-                return addCommand ??
-                    (addCommand = new RelayCommand(obj =>
-                    {
-                        // AddPicture from Manager
-                    }));
+                return addCommand ?? (addCommand = new RelayCommand(obj => _galleryManager.Add()));
             }
         }
 
@@ -91,10 +107,7 @@ namespace MultimediaApp
         {
             get
             {
-                return removeCommand ?? (removeCommand = new RelayCommand(obj =>
-                {
-                    // Remove from Manager class
-                },
+                return removeCommand ?? (removeCommand = new RelayCommand(obj => _galleryManager.Remove(_selectedPicture.Id),
                 (obj) => Pictures.Count > 0));
             }
         }
@@ -104,7 +117,7 @@ namespace MultimediaApp
         {
             get
             {
-                return saveCommand ?? (saveCommand = new RelayCommand(obj => ));
+                return saveCommand ?? (saveCommand = new RelayCommand(obj => _galleryManager.SaveToXml()));
             }
         }
 
@@ -113,13 +126,8 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand(obj => ));
+                return undoCommand ?? (undoCommand = new RelayCommand(obj => _galleryManager.Undo()));
             }
-        }
-
-        private void collectionChanged()
-        {
-
         }
 
         public BitmapImage BitmapImage
@@ -142,26 +150,10 @@ namespace MultimediaApp
             }
         }
 
-        public MainViewModel()
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
-            // Deserialize existing XML with list
-            _xmlFormatter.Deserialize();
-
-            // Init a pictures collection
-            _pictures = _xmlFormatter.GetCollection();
-
-            // Throw it to property
-            Pictures = _pictures;
-            //_view = CollectionViewSource.GetDefaultView(Pictures);
-            //_view.Filter = new Predicate<object>(item => Filter(item as Picture));
-
-            // Getting categories list
-            _categories = new List<string> { "All" };
-            _categories.AddRange(Pictures.Select(o => o.Category).Distinct().ToList());
-            _categories = _categories.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
-
-            // Init Caretaker (for Undo func)
-            _collectionCaretaker = new Caretaker(this);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         //private string _searchText;
@@ -186,8 +178,6 @@ namespace MultimediaApp
         //        }
         //    }
         //}
-
-        public ICollectionView FilteredView { get; private set; }
 
         //private bool Filter(Picture pic)
         //{
@@ -232,18 +222,18 @@ namespace MultimediaApp
             }
         }
 
-        private RelayCommand _eventSearch;
-        public RelayCommand EventSearch
-        {
-            get
-            {
-                return _eventSearch ?? (_eventSearch = new RelayCommand(obj =>
-                {
-                    //var eventList = await App.MobileService.GetTable<Event>().ToListAsync();
+        //private RelayCommand _eventSearch;
+        //public RelayCommand EventSearch
+        //{
+        //    get
+        //    {
+        //        return _eventSearch ?? (_eventSearch = new RelayCommand(obj =>
+        //        {
+        //            //var eventList = await App.MobileService.GetTable<Event>().ToListAsync();
 
-                }));
-            }
-        }
+        //        }));
+        //    }
+        //}
 
         public void TextSearchFilter(ICollectionView filteredView, string searchText)
         {
