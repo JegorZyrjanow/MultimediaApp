@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 
 
@@ -88,19 +85,7 @@ namespace MultimediaApp
             {
                 return addCommand ?? (addCommand = new RelayCommand(obj =>
                 {
-                    // Open FileDialog to take a PicFile
-                    OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "Image Files| *.jpg; *.jpeg; *.png;" };
-                    if (openFileDialog.ShowDialog() == DialogResult.Cancel) return;
-                    string filePath = openFileDialog.FileName; // Getting Pic's File Path
 
-                    // Open Naming Window to give a name to the Picture
-                    List<string> _imageExtensions = new List<string>() { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-                    if (!_imageExtensions.Contains(Path.GetExtension(filePath).ToUpperInvariant())) System.Windows.MessageBox.Show("I don\'t get it..");
-                    else new NamingWindow().ShowDialog();
-
-
-
-                    _galleryService.Add();
                 }));
             }
         }

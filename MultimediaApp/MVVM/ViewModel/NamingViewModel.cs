@@ -10,6 +10,14 @@ namespace MultimediaApp
 {
     internal class NamingViewModel : INotifyPropertyChanged
     {
+        private readonly GalleryService _galleryService;
+        private PictureModel _picture;
+
+        public NamingViewModel()
+        {
+            _galleryService = GalleryService.GetInstance();
+        }
+
         #region propchanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -19,6 +27,41 @@ namespace MultimediaApp
         }
 
         #endregion
+
+        private RelayCommand getCommand;
+        public RelayCommand GetCommand
+        {
+            get
+            {
+                return getCommand ?? (getCommand = new RelayCommand(obj =>
+                {
+                    //_picture = new PictureModel(_picName, _picTag, PicPath);
+                    _galleryService.Add(new PictureModel(_picName, _picTag, PicPath));
+                }));
+            }
+        }
+
+        private RelayCommand _openFileDialogCommand;
+        public RelayCommand OpenFileDialogCommand
+        {
+            get
+            {
+                return _openFileDialogCommand ?? (_openFileDialogCommand = new RelayCommand(obj =>
+                {
+                    // Open FileDialog to take a PicFile
+                    OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "Image Files| *.jpg; *.jpeg; *.png;" };
+                    if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                        return;
+
+                    PicPath = openFileDialog.FileName; // Getting Pic's File Path
+
+                    // Open Naming Window to give a name to the Picture
+                    List<string> _imageExtensions = new List<string>() { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
+                    if (!_imageExtensions.Contains(Path.GetExtension(PicPath).ToUpperInvariant()))
+                        System.Windows.MessageBox.Show("I don\'t get it..");
+                }));
+            }
+        }
 
         private string _picName;
         public string PicName
@@ -32,6 +75,7 @@ namespace MultimediaApp
                 if (_picName != value)
                 {
                     _picName = value;
+                    OnPropertyChanged("PicName");
                 }
             }
         }
@@ -48,26 +92,24 @@ namespace MultimediaApp
                 if (_picTag != value)
                 {
                     _picTag = value;
+                    OnPropertyChanged("PicTag");
                 }
             }
         }
 
-        private RelayCommand getCommand;
-        public RelayCommand GetCommand
+        private string _picPath;
+        public string PicPath
         {
-            get
+            get { return _picPath; }
+            set
             {
-                return getCommand ?? (getCommand = new RelayCommand(obj =>
+                if (_picPath != value)
                 {
-                    _picture.Name = _picName;
-                    _picture.Tag = _picTag;
-                    _galleryService.Add(_picture);
-
-                    Window w = System.Windows.Application.Current.Windows[0];
-                    w.Close();
-                }));
+                    _picPath = value;
+                    OnPropertyChanged("PicPath");
+                }
             }
-        }
+        }        
 
         //private PictureModel GetPic(PictureModel picture)
         //{            

@@ -43,8 +43,6 @@ namespace MultimediaApp.MVVM.Model
             
             _gallery.AddPicture(pic);
 
-
-
             //_collectionCaretaker.Backup();            
             // After adding pic obj throwed into IDK WHERE TO
             // Here will be EVENT that coll was updated
