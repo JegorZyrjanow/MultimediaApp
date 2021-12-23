@@ -1,25 +1,24 @@
-﻿using MultimediaApp;
-using System;
+﻿using MultimediaApp.MVVM.Model;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace MultimediaApp
 {
     internal class NamingViewModel : INotifyPropertyChanged
     {
+        #region propchanged
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private Picture _picture;
-        private string _filePath;
+        #endregion
 
         private string _picName;
         public string PicName
@@ -37,37 +36,42 @@ namespace MultimediaApp
             }
         }
 
-        private string _category;
-        public string PicCategory
+        private string _picTag;
+        public string PicTag
         {
             get
             {
-                return _category;
+                return _picTag;
             }
             set
             {
-                if (_category != value)
+                if (_picTag != value)
                 {
-                    _category = value;
+                    _picTag = value;
                 }
             }
         }
 
-        private RelayCommand getCommand; 
+        private RelayCommand getCommand;
         public RelayCommand GetCommand
         {
             get
             {
                 return getCommand ?? (getCommand = new RelayCommand(obj =>
                 {
-                    
+                    _picture.Name = _picName;
+                    _picture.Tag = _picTag;
+                    _galleryService.Add(_picture);
+
+                    Window w = System.Windows.Application.Current.Windows[0];
+                    w.Close();
                 }));
             }
         }
 
-        private Picture GetPic(Picture picture)
-        {
-            return _picture;
-        }
+        //private PictureModel GetPic(PictureModel picture)
+        //{            
+        //    return _picture;
+        //}
     }
 }

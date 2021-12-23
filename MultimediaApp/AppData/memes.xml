@@ -1,38 +1,33 @@
 <?xml version="1.0"?>
-<ArrayOfPicture xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Picture>
+<ArrayOfPictureModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PictureModel>
     <Name>123www</Name>
-    <Category>lol2</Category>
-    <Id>3</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\ChristianMemes.jpg</Path>
-    <Vis>Visible</Vis>
-  </Picture>
-  <Picture>
+    <Tag>lol2</Tag>
+    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\ChristianMemes.jpg</Path>    
+    <Id>1</Id>
+  </PictureModel>
+  <PictureModel>
     <Name>123321</Name>
-    <Category>lol2</Category>
-    <Id>4</Id>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\reiku.jpg</Path>
-    <Vis>Visible</Vis>
-  </Picture>
-  <Picture>
+    <Tag>lol2</Tag>
+    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\reiku.jpg</Path>    
+    <Id>2</Id>
+  </PictureModel>
+  <PictureModel>
     <Name>troll (PNG)</Name>
-    <Category>wc</Category>
-    <Id>5</Id>
+    <Tag>wc</Tag>
     <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
-    <Vis>Visible</Vis>
-  </Picture>
-  <Picture>
+    <Id>3</Id>
+  </PictureModel>
+  <PictureModel>
     <Name>123 (JPG)</Name>
-    <Category>new</Category>
-    <Id>6</Id>
-    <Path>C:\Users\User\Desktop\AreUHTTPqm.jpg</Path>
-    <Vis>Visible</Vis>
-  </Picture>
-  <Picture>
+    <Tag>new</Tag>
+    <Path>C:\Users\User\Desktop\AreUHTTPqm.jpg</Path>    
+    <Id>4</Id>
+  </PictureModel>
+  <PictureModel>
     <Name>oknomnezapili (JPG)</Name>
-    <Category />
-    <Id>0</Id>
-    <Path>C:\Users\User\Desktop\rainy-aesthetic-pastel-sky-rainy-days-Favim.com-6593845.jpg</Path>
-    <Vis>Visible</Vis>
-  </Picture>
-</ArrayOfPicture>
+    <Tag />
+    <Path>C:\Users\User\Desktop\rainy-aesthetic-pastel-sky-rainy-days-Favim.com-6593845.jpg</Path>    
+    <Id>5</Id>
+  </PictureModel>
+</ArrayOfPictureModel>

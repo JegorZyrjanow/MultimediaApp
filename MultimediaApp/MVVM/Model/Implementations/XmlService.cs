@@ -4,22 +4,22 @@ using System.Xml.Serialization;
 
 namespace MultimediaApp
 {
-    public class XmlFormatter
+    public class XmlService
     {
-        private ObservableCollection<Picture> _picturesList;
-        private readonly XmlSerializer _formatter = new XmlSerializer(typeof(ObservableCollection<Picture>));
+        private ObservableCollection<PictureModel> _picturesList;
+        private readonly XmlSerializer _formatter = new XmlSerializer(typeof(ObservableCollection<PictureModel>));
 
-        public ObservableCollection<Picture> Deserialize()
+        public ObservableCollection<PictureModel> Deserialize()
         {
             using (FileStream fs = new FileStream("../../AppData/memes.xml", FileMode.OpenOrCreate))
             {
-                _picturesList = (ObservableCollection<Picture>)_formatter.Deserialize(fs);
+                _picturesList = (ObservableCollection<PictureModel>)_formatter.Deserialize(fs);
             }
 
             return _picturesList;
         }
 
-        public void Serialize(ObservableCollection<Picture> pictures)
+        public void Serialize(ObservableCollection<PictureModel> pictures)
         {
             using (FileStream fileStream = new FileStream("../../AppData/memes.xml", FileMode.Create))
             {

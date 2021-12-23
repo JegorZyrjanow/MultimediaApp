@@ -111,7 +111,8 @@
             </TreeView.Resources>
         </TreeView>-->
 
-            <ListBox Background="#7c7a7a"
+            <ListBox x:Name="picturesList"
+                     Background="#7c7a7a"
                      Grid.Row="2"
                      HorizontalAlignment="Center"
                      Width="184"
@@ -130,7 +131,8 @@
                                            Text="{Binding Path=Name}"/>
                                 <TextBlock x:Name="Category"
                                            Margin="3,0,0,0"
-                                           Text="{Binding Path=Category}"/>
+                                           FontSize="12"
+                                           Text="{Binding Path=Tag}"/>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
@@ -186,7 +188,7 @@
                       Width="92"
                       HorizontalAlignment="Right"
                       ItemsSource="{Binding Categories, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding SelectedCategory}"
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
                       Margin="0,4,8,4"/>
 
             <TextBox x:Name="SearchBox"
