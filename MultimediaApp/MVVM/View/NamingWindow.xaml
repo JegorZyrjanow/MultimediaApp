@@ -17,8 +17,6 @@
     </Window.DataContext>
 
     <!--
-        #000000
-        #ffffff
         #494949
         #7c7a7a
         #ff5d73    
@@ -62,22 +60,22 @@
                      HorizontalAlignment="Left"
                      Margin="85,0,0,5"
                      Width="157"
-                     Style="{StaticResource FormTextbox}"
-                     Text="{Binding PicName}" />
+                     Text="{Binding PicName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     <!--Style="{StaticResource FormTextbox}"-->
             <TextBox x:Name="CategoryForm"
                      Grid.Row="2"
                      HorizontalAlignment="Left"
                      Margin="85,0,0,5"
                      Width="157"
-                     Style="{StaticResource FormTextbox}"
-                     Text="{Binding PicTag}"/>
+                     Text="{Binding PicTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                     <!--Style="{StaticResource FormTextbox}"-->
             <TextBox x:Name="PathForm"
                      Grid.Row="3"
                      HorizontalAlignment="Left"
                      Margin="85,0,0,5"
                      Width="128"
-                     Style="{StaticResource FormTextbox}"
                      Text="{Binding PicPath}"/>
+                     <!--Style="{StaticResource FormTextbox}"-->
             <Button Content=". . ."
                     Height="16"
                     Margin="218,0,10,0"

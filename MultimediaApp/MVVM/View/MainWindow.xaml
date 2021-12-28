@@ -184,19 +184,20 @@
             </StackPanel>
 
             <ComboBox x:Name="ComboBoxCategories"
+                      SelectedIndex="0"
                       Grid.Row="3"
                       Width="92"
                       HorizontalAlignment="Right"
+                      Margin="0,4,8,4"
                       ItemsSource="{Binding Categories, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
-                      Margin="0,4,8,4"/>
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
 
             <TextBox x:Name="SearchBox"
+                     Margin="8,3"
                      Grid.Row="1"
-                     Style="{StaticResource SearchTextbox}"
                      Text="{Binding SearchText,
-                            Mode=TwoWay,
-                            UpdateSourceTrigger=PropertyChanged}"/>
+                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                     <!--Style="{StaticResource SearchTextbox}"-->
 
         </Grid>
     </Border>

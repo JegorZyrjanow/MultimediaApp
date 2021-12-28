@@ -3,9 +3,6 @@ using System.Windows.Input;
 
 namespace MultimediaApp
 {
-    /// <summary>
-    /// Interaction logic for Naming.xaml
-    /// </summary>
     public partial class NamingWindow : Window
     {
         public void ShowDialog(Window owner)

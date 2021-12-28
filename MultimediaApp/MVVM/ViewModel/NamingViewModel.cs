@@ -2,31 +2,40 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
+using System;
 
 namespace MultimediaApp
 {
     internal class NamingViewModel : INotifyPropertyChanged
     {
         private readonly GalleryService _galleryService;
-        private PictureModel _picture;
 
         public NamingViewModel()
         {
-            _galleryService = GalleryService.GetInstance();
+            if (!IsInDesignMode)
+                _galleryService = GalleryService.GetInstance();       
         }
 
-        #region propchanged
+        private bool IsInDesignMode
+        {
+            get
+            {
+                var prop = DesignerProperties.IsInDesignModeProperty;
+                return (bool)DependencyPropertyDescriptor
+                    .FromProperty(prop, typeof(FrameworkElement))
+                    .Metadata.DefaultValue;
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-
-        #endregion
 
         private RelayCommand getCommand;
         public RelayCommand GetCommand
@@ -35,10 +44,35 @@ namespace MultimediaApp
             {
                 return getCommand ?? (getCommand = new RelayCommand(obj =>
                 {
+                    if (PicPath == null)
+                    {
+                        System.Windows.MessageBox.Show("Please, choose a picture");
+                        return;
+                    }
+                    if (PicName == null)
+                        PicName = Path.GetFileName(PicPath);
+                    if (PicTag == "Show all")
+                        System.Windows.MessageBox.Show("Please, choose other category name");
+                    var pic = new PictureModel(PicName, PicTag, PicPath) { Id = GetLastItemId() + 1};
+                    _galleryService.Add(pic);
+
+                    // CLOSE THIS WINDOW
+                    
                     //_picture = new PictureModel(_picName, _picTag, PicPath);
-                    _galleryService.Add(new PictureModel(_picName, _picTag, PicPath));
                 }));
             }
+        }
+
+        public int GetLastItemId()
+        {
+            List<int> ids = (from pic in _galleryService.GetAll() select pic.Id).ToList();
+            int lastId = ids.Max();
+            return lastId;
+
+            // =========================
+
+            //var lastItem = _galleryService.GetAll()[_galleryService.GetAll().Count - 1];
+            //return lastItem.Id + 1;
         }
 
         private RelayCommand _openFileDialogCommand;
@@ -66,10 +100,8 @@ namespace MultimediaApp
         private string _picName;
         public string PicName
         {
-            get
-            {
-                return _picName;
-            }
+            get => _picName;
+            
             set
             {
                 if (_picName != value)
@@ -83,10 +115,8 @@ namespace MultimediaApp
         private string _picTag;
         public string PicTag
         {
-            get
-            {
-                return _picTag;
-            }
+            get => _picTag;
+
             set
             {
                 if (_picTag != value)
@@ -100,7 +130,7 @@ namespace MultimediaApp
         private string _picPath;
         public string PicPath
         {
-            get { return _picPath; }
+            get => _picPath;
             set
             {
                 if (_picPath != value)
@@ -109,11 +139,6 @@ namespace MultimediaApp
                     OnPropertyChanged("PicPath");
                 }
             }
-        }        
-
-        //private PictureModel GetPic(PictureModel picture)
-        //{            
-        //    return _picture;
-        //}
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 
@@ -13,28 +14,54 @@ namespace MultimediaApp
     internal class MainViewModel : INotifyPropertyChanged
     {
         readonly GalleryService _galleryService;
+
+        private string lastTag;
+        private string lastName;
+
         public MainViewModel()
         {
-            _galleryService = GalleryService.GetInstance();
-            //_galleryService.SetExistingCollectionFromXml();
-            Categories = _galleryService.GetCategories();
-            _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
-
-            foreach (var item in _galleryService.GetAll())
+            if (!IsInDesignMode)
             {
-                _pictures.Add(item);
+                _galleryService = GalleryService.GetInstance();
+                // Getting existing pics collection
+                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll()); // Copy the gallery is NOT REFERENCE
+                                                                                              // Getting categories
+                Categories = _galleryService.GetTags();
+                // Watching any changes in the GalleryService
+                _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
             }
+        }
 
+        private bool IsInDesignMode
+        {
+            get
+            {
+                var prop = DesignerProperties.IsInDesignModeProperty;
+                return (bool)DependencyPropertyDescriptor
+                    .FromProperty(prop, typeof(FrameworkElement))
+                    .Metadata.DefaultValue;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
             // Different kind of changes that may have occurred in collection            
             if (e.Action == NotifyCollectionChangedAction.Add
-                || e.Action == NotifyCollectionChangedAction.Replace
-                || e.Action == NotifyCollectionChangedAction.Remove
-                || e.Action == NotifyCollectionChangedAction.Move)
+            || e.Action == NotifyCollectionChangedAction.Replace
+            || e.Action == NotifyCollectionChangedAction.Remove
+            || e.Action == NotifyCollectionChangedAction.Move)
             {
+
+                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByTag(lastTag));
+                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByName(lastName));
+
+                //_pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll()); // replace with filters 
                 OnPropertyChanged("Pictures");
                 OnPropertyChanged("Categories");
             }
@@ -64,7 +91,13 @@ namespace MultimediaApp
         public List<string> Categories
         {
             get { return _categories; }
-            set { _categories = value; }
+            set
+            {
+                _categories = new List<string>();
+                _categories.Clear();
+                _categories.Add("Show all");
+                _categories.AddRange(value);
+            } 
         }
 
         private string _selectedCategory;
@@ -74,7 +107,8 @@ namespace MultimediaApp
             set
             {
                 _selectedCategory = value;
-                _galleryService.GetByTag(_selectedCategory);
+                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByTag(value));
+                OnPropertyChanged("Pictures");
             }
         }
 
@@ -85,7 +119,7 @@ namespace MultimediaApp
             {
                 return addCommand ?? (addCommand = new RelayCommand(obj =>
                 {
-
+                    new NamingWindow().ShowDialog(); // Open Naming Window to set Pic parameters
                 }));
             }
         }
@@ -142,11 +176,24 @@ namespace MultimediaApp
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        private string _searchText;
+        public string SearchText
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged("SearchText");
+                    _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByName(value));
+                    lastName = value; //Save last search text
+                    OnPropertyChanged("Pictures");
+                }
+            }
         }
+
+        
 
     }
 }

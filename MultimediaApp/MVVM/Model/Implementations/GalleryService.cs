@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,24 +9,27 @@ namespace MultimediaApp.MVVM.Model
 {
     internal sealed class GalleryService : IGalleryService
     {
-        private readonly GalleryModel _gallery;
+        private readonly ObservableCollection<PictureModel> _ViewPics;
         private readonly ObservableCollection<PictureModel> _pictures;
-        private readonly List<string> _tags;
-        
-        private ObservableCollection<PictureModel> _editFieldPics;
-        public ObservableCollection<PictureModel> Pictures { get { return _editFieldPics; } }
+        public ObservableCollection<PictureModel> Pictures { get { return _pictures; } }
 
+        //private readonly GalleryModel _gallery;
+        //private readonly List<string> _tags;
         //private GalleryCaretaker _collectionCaretaker = new GalleryCaretaker(this);
 
-        #region Constructor
+        private readonly XmlService _xmlFormatter = new XmlService();
 
         private GalleryService()
         {
-            _gallery = new GalleryModel();
-            _pictures = _gallery.GetPics();
+            _pictures = ExtractPictures();
 
-            _pictures.CollectionChanged += CollectionChangedMethod;
-            _editFieldPics = new ObservableCollection<PictureModel>(_pictures);
+            _ViewPics = new ObservableCollection<PictureModel>(_pictures);
+
+            // ==========================
+
+            //_gallery = new GalleryModel();
+            //_pictures = _gallery.GetPics();
+            //_pictures.CollectionChanged += CollectionChangedMethod;
         }
         private static GalleryService _instance;
         public static GalleryService GetInstance()
@@ -35,84 +37,110 @@ namespace MultimediaApp.MVVM.Model
             return _instance ?? (_instance = new GalleryService());
         }
 
-        #endregion
+        private ObservableCollection<PictureModel> ExtractPictures()
+        {
+            return new ObservableCollection<PictureModel>(_xmlFormatter.Deserialize());
+        }
 
         public void Add(PictureModel pic)
         {
-            // DELEGATE
-            
-            _gallery.AddPicture(pic);
+            //_collectionCaretaker.Backup();
 
-            //_collectionCaretaker.Backup();            
-            // After adding pic obj throwed into IDK WHERE TO
-            // Here will be EVENT that coll was updated
+            // DELEGATE
+
+            _pictures.Add(pic);
         }
 
         public void Remove(int? picId)
         {
             //_collectionCaretaker.Backup();
-            
-            if (_editFieldPics == null)
+
+            if (_pictures == null)
                 MessageBox.Show("Collection is empty.");
             else if (picId == null)
                 return;
             else
-                _editFieldPics.RemoveAt(picId.GetValueOrDefault());
+                _pictures.Remove((from pic in _pictures where pic.Id == picId.GetValueOrDefault() select pic).Single());
+            //_pictures.RemoveAt(picId.GetValueOrDefault());
         }
 
-        public void Undo() // not used
+        public void Undo() // NOT USED YET
         {
-            if (_editFieldPics == null)
+            //_collectionCaretaker.Undo();
+
+            if (_ViewPics == null)
             {
                 MessageBox.Show("Collection is empty.");
             }
-            //
-            //_collectionCaretaker.Undo();
         }
 
-        public void SaveToXml()
+        public void SaveToXml() // NOT USED YET
         {
             //_gallery.Serialize(_pictures);
         }
 
-        public ObservableCollection<PictureModel> GetByName(string name)
+        public ObservableCollection<PictureModel> GetPicturesByName(string name)
         {
-            if (_editFieldPics == null)
+            if (_pictures == null)
+            {
                 MessageBox.Show("Collection is empty.");
+                return GetAll();
+            }
 
-            _editFieldPics = (ObservableCollection<PictureModel>)(from pic in _pictures where pic.Name == name select pic);
+            if (string.IsNullOrEmpty(name))
+            {
+                return GetAll();
+            }
 
-            return _editFieldPics;
+            ObservableCollection<PictureModel> result = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Name.Contains(name) select pic);
+
+            return result;
+
+            //ObservableCollection<PictureModel> coll = new ObservableCollection<PictureModel>(/*from pic in _pictures where pic.Name == name select pic*/);
+
+            //foreach (var pic in _pictures)
+            //{
+            //    if (pic.Name == name)
+            //    {
+            //        coll.Add(pic);
+            //    }
+            //}
         }
 
-        public ObservableCollection<PictureModel> GetByTag(string tag) // --
+        public ObservableCollection<PictureModel> GetPicturesByTag(string tag) // --
         {
-            if (_editFieldPics == null)
+            if (_pictures == null)
+            {
                 MessageBox.Show("Collection is empty.");
-            IEnumerable<PictureModel> filteredPics = from pic in _pictures where pic.Tag == tag select pic;
-            _editFieldPics = (ObservableCollection<PictureModel>)filteredPics;
+                return GetAll();
+            }
 
-            return _editFieldPics;
+            else if (tag == "Show all")
+                return GetAll();
+
+            ObservableCollection<PictureModel> result = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tag == tag select pic);
+            return result;
         }
 
         public ObservableCollection<PictureModel> GetAll() // --
         {
-            if (_editFieldPics == null)
+            if (_pictures == null)
                 MessageBox.Show("Collection is empty.");
 
-            _editFieldPics.CollectionChanged -= CollectionChangedMethod;
+            return _pictures;
 
-            _editFieldPics = new ObservableCollection<PictureModel>(_pictures);
-
-            _editFieldPics.CollectionChanged += CollectionChangedMethod;
-            
-            return _editFieldPics;
+            //_pictures.CollectionChanged -= CollectionChangedMethod;               // ???
+            //_ViewPics = new ObservableCollection<PictureModel>(_pictures);
+            //_pictures.CollectionChanged += CollectionChangedMethod;            
+            //return _ViewPics;                                                     // ???
         }
 
-        public List<string> GetCategories()
+        public List<string> GetTags()
         {
-            return _gallery.GetTags();
-        } // ???
+            List<string> cats = new List<string>((from pic in _pictures select pic.Tag).Distinct().ToList());
+            cats = cats.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
+            return cats; // (from pic in _pictures select pic.Tag).Distinct().ToList()
+        }
 
         //public void SetExistingCollectionFromXml()
         //{
@@ -120,30 +148,31 @@ namespace MultimediaApp.MVVM.Model
         //    //_pictures.CollectionChanged += CollectionChangedMethod;
         //}
 
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e) // METHOD IS TO ACCEPT CHANGES IN VIEWPICS TO MAIN COLLECTION
         {
             // Different kind of changes that may have occurred in collection            
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                _editFieldPics.Add(_editFieldPics.Last());
-            }    
+                //_pictures.Add(_editFieldPics.Last());
+            }
             if (e.Action == NotifyCollectionChangedAction.Replace)
             {
                 // ___
             }
             if (e.Action == NotifyCollectionChangedAction.Remove) // --?
             {
-                var filteredIds = _editFieldPics.Select(p => p.Id);
-                var MainIds = _pictures.Select(p => p.Id);
-                var difference = filteredIds.Except(MainIds);
-                foreach (var id in difference)
-                {
-                    _pictures.RemoveAt(id);
-                }
+                //var filteredIds = _ViewPics.Select(p => p.Id);
+                //var MainIds = _pictures.Select(p => p.Id);
+                //var difference = filteredIds.Except(MainIds);
+                //foreach (var id in difference)
+                //{
+                //    _pictures.RemoveAll(item => item.Id == id);
+                //    _pictures.Remove(_pictures.Where(i => i.Id == id).Single());
+                //}
             }
             if (e.Action == NotifyCollectionChangedAction.Move)
             {
-                
+
             }
         }
 
@@ -167,7 +196,7 @@ namespace MultimediaApp.MVVM.Model
                 _pictures.Add(item);
             }
         }
-        #endregion
+
 
     }
 
@@ -190,4 +219,8 @@ namespace MultimediaApp.MVVM.Model
             return _state;
         }
     }
+
+    #endregion
+
+
 }
