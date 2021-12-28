@@ -22,14 +22,6 @@ namespace MultimediaApp.MVVM.Model
         private GalleryService()
         {
             _pictures = ExtractPictures();
-
-            //_viewPics = new ObservableCollection<PictureModel>(_pictures);
-
-            // ==========================
-
-            //_gallery = new GalleryModel();
-            //_pictures = _gallery.GetPics();
-            //_pictures.CollectionChanged += CollectionChangedMethod;
         }
         private static GalleryService _instance;
         public static GalleryService GetInstance()
