@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 
@@ -199,7 +202,27 @@ namespace MultimediaApp
                 }
                 catch (Exception)
                 {
-                    return new BitmapImage(Properties.Resources.MissingImage); // If file not found show that it is
+                    var memory = new MemoryStream();
+                    Properties.Resources.MissingImage.Save(memory, ImageFormat.Png);
+                    memory.Position = 0;
+
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.StreamSource = memory;
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.EndInit();
+                    bitmapImage.Freeze();
+
+                    return bitmapImage;
+
+                    //IntPtr hBitmap = Properties.Resources.MissingImage.GetHbitmap();
+                    //BitmapImage converted = new BitmapImage(new Uri(Imaging.CreateBitmapSourceFromHBitmap(
+                    //    hBitmap,
+                    //    IntPtr.Zero,
+                    //    Int32Rect.Empty,
+                    //    BitmapSizeOptions.FromEmptyOptions()).ToString()));
+                    ////return new BitmapImage(Properties.Resources.MissingImage); // If file not found show that it is
+                    //return converted;
                 }
             }
         }
