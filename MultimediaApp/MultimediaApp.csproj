@@ -103,7 +103,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\RelayCommand.cs" />
-    <Compile Include="MVVM\Model\GalleryModel.cs" />
+    <Compile Include="MVVM\Model\Contracts\IXmlService.cs" />
     <Compile Include="MVVM\Model\GalleryCaretaker.cs" />
     <Compile Include="MVVM\Model\Contracts\IGalleryService.cs" />
     <Compile Include="MVVM\Model\PictureModel.cs" />

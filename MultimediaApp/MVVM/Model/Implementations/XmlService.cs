@@ -1,10 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using MultimediaApp.MVVM.Model;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
 
 namespace MultimediaApp
 {
-    public class XmlService
+    public class XmlService : IXmlService
     {
         private ObservableCollection<PictureModel> _picturesList;
         private readonly XmlSerializer _formatter = new XmlSerializer(typeof(ObservableCollection<PictureModel>));

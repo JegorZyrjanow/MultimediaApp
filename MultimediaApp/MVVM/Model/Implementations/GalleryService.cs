@@ -9,7 +9,7 @@ namespace MultimediaApp.MVVM.Model
 {
     internal sealed class GalleryService : IGalleryService
     {
-        private readonly ObservableCollection<PictureModel> _ViewPics;
+        //private readonly ObservableCollection<PictureModel> _viewPics;
         private readonly ObservableCollection<PictureModel> _pictures;
         public ObservableCollection<PictureModel> Pictures { get { return _pictures; } }
 
@@ -17,13 +17,13 @@ namespace MultimediaApp.MVVM.Model
         //private readonly List<string> _tags;
         //private GalleryCaretaker _collectionCaretaker = new GalleryCaretaker(this);
 
-        private readonly XmlService _xmlFormatter = new XmlService();
+        private readonly XmlService _xmlService = new XmlService();
 
         private GalleryService()
         {
             _pictures = ExtractPictures();
 
-            _ViewPics = new ObservableCollection<PictureModel>(_pictures);
+            //_viewPics = new ObservableCollection<PictureModel>(_pictures);
 
             // ==========================
 
@@ -39,14 +39,14 @@ namespace MultimediaApp.MVVM.Model
 
         private ObservableCollection<PictureModel> ExtractPictures()
         {
-            return new ObservableCollection<PictureModel>(_xmlFormatter.Deserialize());
+            return new ObservableCollection<PictureModel>(_xmlService.Deserialize());
         }
 
         public void Add(PictureModel pic)
         {
             //_collectionCaretaker.Backup();
 
-            // DELEGATE
+            // DELEGATE ???
 
             _pictures.Add(pic);
         }
@@ -68,16 +68,13 @@ namespace MultimediaApp.MVVM.Model
         {
             //_collectionCaretaker.Undo();
 
-            if (_ViewPics == null)
-            {
-                MessageBox.Show("Collection is empty.");
-            }
+
+
+            //if (_viewPics == null)
+            //    MessageBox.Show("Collection is empty.");
         }
 
-        public void SaveToXml() // NOT USED YET
-        {
-            //_gallery.Serialize(_pictures);
-        }
+        public void SaveToXml() => _xmlService.Serialize(_pictures);
 
         public ObservableCollection<PictureModel> GetPicturesByName(string name)
         {
@@ -95,7 +92,7 @@ namespace MultimediaApp.MVVM.Model
             ObservableCollection<PictureModel> result = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Name.Contains(name) select pic);
 
             return result;
-
+            {
             //ObservableCollection<PictureModel> coll = new ObservableCollection<PictureModel>(/*from pic in _pictures where pic.Name == name select pic*/);
 
             //foreach (var pic in _pictures)
@@ -105,6 +102,7 @@ namespace MultimediaApp.MVVM.Model
             //        coll.Add(pic);
             //    }
             //}
+            }
         }
 
         public ObservableCollection<PictureModel> GetPicturesByTag(string tag) // --
@@ -177,18 +175,13 @@ namespace MultimediaApp.MVVM.Model
         }
 
         #region Memento
-        public IMemento Save()
-        {
-            return new GalleryServiceMemento(_pictures);
-        }
+        public IMemento Save() => new GalleryServiceMemento(_pictures);
 
         // Восстанавливает состояние Создателя из объекта снимка.
         public void Restore(IMemento memento)
         {
             if (!(memento is GalleryServiceMemento))
-            {
                 throw new Exception("Unknown memento class " + memento.ToString());
-            }
 
             _pictures.Clear();
             foreach (var item in memento.GetState())
@@ -204,23 +197,13 @@ namespace MultimediaApp.MVVM.Model
     {
         ObservableCollection<PictureModel> GetState();
     }
-
     class GalleryServiceMemento : IMemento
     {
         private readonly ObservableCollection<PictureModel> _state;
-
-        public GalleryServiceMemento(ObservableCollection<PictureModel> state)
-        {
-            _state = state;
-        }
-
-        public ObservableCollection<PictureModel> GetState()
-        {
-            return _state;
-        }
+        public GalleryServiceMemento(ObservableCollection<PictureModel> state) => _state = state;
+        public ObservableCollection<PictureModel> GetState() => _state;        
     }
 
     #endregion
-
 
 }
