@@ -199,7 +199,7 @@ namespace MultimediaApp
                 }
                 catch (Exception)
                 {
-                    return new BitmapImage(new Uri($"pack://application:,,,/Images/notFound.png")); // If file not found show that it is
+                    return new BitmapImage(Properties.Resources.MissingImage); // If file not found show that it is
                 }
             }
         }

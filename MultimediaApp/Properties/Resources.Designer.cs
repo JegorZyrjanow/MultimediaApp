@@ -63,9 +63,9 @@ namespace MultimediaApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ae8ac2fa217d23aadcc913989fcc34a2 {
+        internal static System.Drawing.Bitmap MissingImage {
             get {
-                object obj = ResourceManager.GetObject("ae8ac2fa217d23aadcc913989fcc34a2", resourceCulture);
+                object obj = ResourceManager.GetObject("MissingImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
