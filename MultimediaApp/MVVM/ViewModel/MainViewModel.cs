@@ -1,4 +1,5 @@
 ﻿using MultimediaApp.MVVM.Model;
+//using MultimediaApp.MVVM.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 
@@ -29,7 +29,7 @@ namespace MultimediaApp
                 _galleryService = GalleryService.GetInstance();
                 // Getting existing pics collection
                 Pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll()); // Copy the gallery is NOT REFERENCE
-                                                                                              // Getting categories
+                                                                                             // Getting categories
                 Categories = _galleryService.GetTags();
                 // Watching any changes in the GalleryService
                 _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
@@ -71,7 +71,7 @@ namespace MultimediaApp
             if (e.Action == NotifyCollectionChangedAction.Add
                 || e.Action == NotifyCollectionChangedAction.Remove)
                 Categories = _galleryService.GetTags();
-            
+
             OnPropertyChanged("Pictures");
             OnPropertyChanged("Categories");
         }
@@ -80,7 +80,7 @@ namespace MultimediaApp
         public ObservableCollection<PictureModel> Pictures
         {
             get { return _pictures; }
-            set 
+            set
             {
                 ObservableCollection<PictureModel> newList = new ObservableCollection<PictureModel>(value.OrderBy(pic => pic.Name));
                 _pictures = newList;
@@ -94,6 +94,7 @@ namespace MultimediaApp
             set
             {
                 _selectedPicture = value;
+                _galleryService.SelectedPicture = _selectedPicture;
                 OnPropertyChanged("SelectedPicture");
                 OnPropertyChanged("BitmapImage");
                 OnPropertyChanged("SearchText");
@@ -110,7 +111,7 @@ namespace MultimediaApp
                 _categories.Clear();
                 _categories.Add("Show all");
                 _categories.AddRange(value);
-            } 
+            }
         }
 
         private string _selectedCategory;
@@ -173,19 +174,37 @@ namespace MultimediaApp
             }
         }
 
+        private RelayCommand editPicCommand;
+        public RelayCommand EditPicCommand
+        {
+            get
+            {
+                return editPicCommand ?? (editPicCommand = new RelayCommand(obj => new EditWindow().ShowDialog()));
+            }
+        }
+
         private string _searchText;
         public string SearchText
         {
             get => _searchText;
             set
             {
-                    _searchText = value;
-                    OnPropertyChanged("SearchText");
-                    _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByName(value));
-                    if (lastTag != "Show all")
-                        Pictures = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tag == lastTag select pic);
-                    lastName = value; //Save last search text
-                    OnPropertyChanged("Pictures");
+                _searchText = value;
+                OnPropertyChanged("SearchText");
+                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByName(value));
+                if (lastTag != "Show all")
+                {
+                    //var cats = treeOfCats.SelectMany(x => x).Distinct().ToList();
+                    //cats = cats.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
+                    //return cats; // (from pic in _pictures select pic.Tag).Distinct().ToList()
+
+                    //List<List<string>> treeOfCats = new List<List<string>>((from pic in _pictures select pic.Tags).Distinct().ToList());
+                    //List<List<PictureModel>> treeOfPics = new List<List<PictureModel>>((from pic in _pictures select pic).ToList();
+
+                    Pictures = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tags.Contains(lastTag) select pic);
+                }
+                lastName = value; //Save last search text
+                OnPropertyChanged("Pictures");
             }
         }
 
@@ -227,7 +246,7 @@ namespace MultimediaApp
             }
         }
 
-        
+
 
     }
 }

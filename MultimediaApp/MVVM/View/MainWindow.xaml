@@ -53,6 +53,9 @@
                             <MenuItem Header="Undo"
                                       Foreground="Black"
                                       Command="{Binding UndoCommand}" />
+                            <MenuItem Header="Edit Picture"
+                                      Foreground="Black"
+                                      Command="{Binding EditPicCommand}" />
                         </MenuItem>
                     </Menu>
 

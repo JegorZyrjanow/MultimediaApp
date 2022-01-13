@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
-using System;
 
 namespace MultimediaApp
 {
@@ -17,7 +16,7 @@ namespace MultimediaApp
         public NamingViewModel()
         {
             if (!IsInDesignMode)
-                _galleryService = GalleryService.GetInstance();       
+                _galleryService = GalleryService.GetInstance();
         }
 
         private bool IsInDesignMode
@@ -51,13 +50,15 @@ namespace MultimediaApp
                     }
                     if (PicName == null)
                         PicName = Path.GetFileName(PicPath);
-                    if (PicTag == "Show all")
+                    if (PicTags == "Show all")
                         System.Windows.MessageBox.Show("Please, choose other category name");
-                    var pic = new PictureModel(PicName, PicTag, PicPath) { Id = GetLastItemId() + 1};
+                    List<string> newList = new List<string>();
+                    newList = new List<string>(PicTags.Split(' ').ToList());
+                    var pic = new PictureModel(PicName, newList, PicPath) { Id = GetLastItemId() + 1 };
                     _galleryService.Add(pic);
 
                     // CLOSE THIS WINDOW
-                    
+
                     //_picture = new PictureModel(_picName, _picTag, PicPath);
                 }));
             }
@@ -101,7 +102,7 @@ namespace MultimediaApp
         public string PicName
         {
             get => _picName;
-            
+
             set
             {
                 if (_picName != value)
@@ -112,16 +113,23 @@ namespace MultimediaApp
             }
         }
 
-        private string _picTag;
-        public string PicTag
+        private List<string> _picTags;
+        public string PicTags
         {
-            get => _picTag;
+            get
+            {
+                if (_picTags == null)
+                {
+                    return null;
+                }
+                return string.Join(" ", _picTags);
+            }
 
             set
             {
-                if (_picTag != value)
+                if (_picTags != new List<string>(value.Split(' ')))
                 {
-                    _picTag = value;
+                    _picTags = new List<string>(value.Split(' '));
                     OnPropertyChanged("PicTag");
                 }
             }

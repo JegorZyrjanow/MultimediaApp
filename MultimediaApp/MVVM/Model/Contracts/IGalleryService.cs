@@ -8,10 +8,13 @@ namespace MultimediaApp.MVVM.Model
         // Editing
         void Add(PictureModel pic);
         void Remove(int? id);
-        void Undo();
+        void Undo(); // NOT USED
+        void EditPicture(string newName);
+        void EditPicture(string newName, List<string> newTags);
+        void EditPicture(List<string> newTags);
         // Getters
         ObservableCollection<PictureModel> GetPicturesByName(string name);
-        ObservableCollection<PictureModel> GetPicturesByTag(string tag);
+        ObservableCollection<PictureModel> GetPicturesByTag(string tag); // --
         ObservableCollection<PictureModel> GetAll();
         // Cats
         List<string> GetTags();

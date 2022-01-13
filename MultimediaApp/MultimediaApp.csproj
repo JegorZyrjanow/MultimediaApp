@@ -103,14 +103,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\RelayCommand.cs" />
+    <Compile Include="MVVM\View\EditWindow.xaml.cs">
+      <DependentUpon>EditWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM\Model\Contracts\IXmlService.cs" />
     <Compile Include="MVVM\Model\GalleryCaretaker.cs" />
     <Compile Include="MVVM\Model\Contracts\IGalleryService.cs" />
     <Compile Include="MVVM\Model\PictureModel.cs" />
     <Compile Include="MVVM\Model\Implementations\GalleryService.cs" />
+    <Compile Include="MVVM\ViewModel\EditViewModel.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
     <Compile Include="MVVM\ViewModel\NamingViewModel.cs" />
     <Compile Include="MVVM\Model\Implementations\XmlService.cs" />
+    <Page Include="MVVM\View\EditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MVVM\View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

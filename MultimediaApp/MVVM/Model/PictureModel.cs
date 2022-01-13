@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace MultimediaApp
@@ -7,16 +8,16 @@ namespace MultimediaApp
     public class PictureModel
     {
         public string Name { get; set; }
-        public string Tag { get; set; }
+        public List<string> Tags { get; set; }
         public string Path { get; set; }
         public int Id { get; set; }
 
         private PictureModel() { }
 
-        internal PictureModel(string name, string category, string path)
+        internal PictureModel(string name, List<string> tags, string path)
         {
             Name = name;
-            Tag = category;
+            Tags = tags;
             Path = path;
         }
     }

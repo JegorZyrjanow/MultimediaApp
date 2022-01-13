@@ -12,6 +12,7 @@ namespace MultimediaApp.MVVM.Model
         //private readonly ObservableCollection<PictureModel> _viewPics;
         private readonly ObservableCollection<PictureModel> _pictures;
         public ObservableCollection<PictureModel> Pictures { get { return _pictures; } }
+        public PictureModel SelectedPicture { get; set; }
 
         //private readonly GalleryModel _gallery;
         //private readonly List<string> _tags;
@@ -66,6 +67,22 @@ namespace MultimediaApp.MVVM.Model
             //    MessageBox.Show("Collection is empty.");
         }
 
+        public void EditPicture(string newName, List<string> newTags)
+        {
+            SelectedPicture.Name = newName;
+            SelectedPicture.Tags = newTags;
+        }
+
+        public void EditPicture(string newName)
+        {
+            SelectedPicture.Name = newName;
+        }
+
+        public void EditPicture(List<string> newTags)
+        {
+            SelectedPicture.Tags = newTags;
+        }
+
         public void SaveToXml() => _xmlService.Serialize(_pictures);
 
         public ObservableCollection<PictureModel> GetPicturesByName(string name)
@@ -85,15 +102,15 @@ namespace MultimediaApp.MVVM.Model
 
             return result;
             {
-            //ObservableCollection<PictureModel> coll = new ObservableCollection<PictureModel>(/*from pic in _pictures where pic.Name == name select pic*/);
+                //ObservableCollection<PictureModel> coll = new ObservableCollection<PictureModel>(/*from pic in _pictures where pic.Name == name select pic*/);
 
-            //foreach (var pic in _pictures)
-            //{
-            //    if (pic.Name == name)
-            //    {
-            //        coll.Add(pic);
-            //    }
-            //}
+                //foreach (var pic in _pictures)
+                //{
+                //    if (pic.Name == name)
+                //    {
+                //        coll.Add(pic);
+                //    }
+                //}
             }
         }
 
@@ -108,7 +125,7 @@ namespace MultimediaApp.MVVM.Model
             else if (tag == "Show all")
                 return GetAll();
 
-            ObservableCollection<PictureModel> result = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tag == tag select pic);
+            ObservableCollection<PictureModel> result = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tags.Contains(tag) select pic); // contains
             return result;
         }
 
@@ -127,7 +144,17 @@ namespace MultimediaApp.MVVM.Model
 
         public List<string> GetTags()
         {
-            List<string> cats = new List<string>((from pic in _pictures select pic.Tag).Distinct().ToList());
+            //List<string> newList = s
+            //foreach (var item in _pictures)
+            //{
+            //    List<string> cats = new List<string>(item.Tags).Distinct().ToList();
+            //}
+            //List<string> cats = new List<string>((from pic in _pictures select pic.Tags).Distinct().ToList());
+
+            List<List<string>> treeOfCats = new List<List<string>>((from pic in _pictures select pic.Tags).Distinct().ToList());
+
+            var cats = treeOfCats.SelectMany(x => x).Distinct().ToList();
+
             cats = cats.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
             return cats; // (from pic in _pictures select pic.Tag).Distinct().ToList()
         }
@@ -193,7 +220,7 @@ namespace MultimediaApp.MVVM.Model
     {
         private readonly ObservableCollection<PictureModel> _state;
         public GalleryServiceMemento(ObservableCollection<PictureModel> state) => _state = state;
-        public ObservableCollection<PictureModel> GetState() => _state;        
+        public ObservableCollection<PictureModel> GetState() => _state;
     }
 
     #endregion
