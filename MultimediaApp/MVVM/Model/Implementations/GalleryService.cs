@@ -71,6 +71,8 @@ namespace MultimediaApp.MVVM.Model
         {
             SelectedPicture.Name = newName;
             SelectedPicture.Tags = newTags;
+            _pictures.Add(new PictureModel("", null, "") { Id= -1, Name="", Path="", Tags=new List<string>(newTags)});
+            _pictures.Remove(_pictures.First(p => p.Id == -1));
         }
 
         public void EditPicture(string newName)
@@ -153,7 +155,8 @@ namespace MultimediaApp.MVVM.Model
 
             List<List<string>> treeOfCats = new List<List<string>>((from pic in _pictures select pic.Tags).Distinct().ToList());
 
-            var cats = treeOfCats.SelectMany(x => x).Distinct().ToList();
+            List<string> cats = new List<string>();
+            cats = new List<string>(treeOfCats.SelectMany(x => x).Distinct().ToList());
 
             cats = cats.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
             return cats; // (from pic in _pictures select pic.Tag).Distinct().ToList()

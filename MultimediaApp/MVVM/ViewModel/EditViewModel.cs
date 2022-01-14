@@ -55,14 +55,17 @@ namespace MultimediaApp
                         System.Windows.MessageBox.Show("Please, choose a picture");
                         return;
                     }
-                    
+
                     List<string> newListOfTags = new List<string>(NewPicTags.Split(' ').ToList());
                     // here we throw new strings
 
                     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
                     if (NewPicTags == "Show all")
+                    {
                         System.Windows.MessageBox.Show("Please, choose other category name");
+                        return;
+                    }
                     _galleryService.EditPicture(NewPicName, newListOfTags);
                 }));
             }

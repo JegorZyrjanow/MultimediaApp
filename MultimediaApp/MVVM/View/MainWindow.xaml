@@ -135,7 +135,7 @@
                                 <TextBlock x:Name="Category"
                                            Margin="3,0,0,0"
                                            FontSize="12"
-                                           Text="{Binding Path=Tag}"/>
+                                           Text="{Binding Path=Tags}"/>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

@@ -1,33 +1,21 @@
 <?xml version="1.0"?>
 <ArrayOfPictureModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PictureModel>
-    <Name>123www</Name>
-    <Tag>lol2</Tag>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\ChristianMemes.jpg</Path>    
-    <Id>1</Id>
+    <Name>artic</Name>
+    <Tags>
+      <string>suka</string>
+      <string>privet</string>
+      <string>ku</string>
+    </Tags>
+    <Path>C:\Users\User\Desktop\images\Новая папка\111111.png</Path>
+    <Id>6</Id>
   </PictureModel>
   <PictureModel>
-    <Name>123321</Name>
-    <Tag>lol2</Tag>
-    <Path>C:\Users\User\Desktop\MultimediaApp\MultimediaApp\Images\memes\reiku.jpg</Path>    
-    <Id>2</Id>
-  </PictureModel>
-  <PictureModel>
-    <Name>troll (PNG)</Name>
-    <Tag>wc</Tag>
-    <Path>C:\Users\User\Desktop\Wc3BTNHeadhunter.png</Path>
-    <Id>3</Id>
-  </PictureModel>
-  <PictureModel>
-    <Name>123 (JPG)</Name>
-    <Tag>new</Tag>
-    <Path>C:\Users\User\Desktop\AreUHTTPqm.jpg</Path>    
-    <Id>4</Id>
-  </PictureModel>
-  <PictureModel>
-    <Name>oknomnezapili (JPG)</Name>
-    <Tag />
-    <Path>C:\Users\User\Desktop\rainy-aesthetic-pastel-sky-rainy-days-Favim.com-6593845.jpg</Path>    
-    <Id>5</Id>
+    <Name>risunok</Name>
+    <Tags>
+      <string>risunki</string>
+    </Tags>
+    <Path>C:\Users\User\Desktop\images\Новая папка\z.png</Path>
+    <Id>7</Id>
   </PictureModel>
 </ArrayOfPictureModel>
