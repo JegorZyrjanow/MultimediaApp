@@ -1,0 +1,192 @@
+﻿<Window x:Class="MultimediaApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MultimediaApp"
+        mc:Ignorable="d"
+        Height="580" Width="1000"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True">
+
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+
+    <Border Background="#494949">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="350"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Border Grid.ColumnSpan="333"
+                    Background="Black"
+                    MouseDown="Border_MouseDown">
+
+                <Grid HorizontalAlignment="Stretch">
+                    <Label Content=""
+                           Foreground="White"
+                           FontWeight="SemiBold"/>
+
+                    <Menu Grid.Row="1"
+                          Background="Transparent"
+                          Foreground="White"
+                          HorizontalAlignment="Left"
+                          Width="140"
+                          Padding="0,2,0,0">
+                        <MenuItem Header="File">
+                            <MenuItem Header="Overwrite XML"
+                                      Foreground="Black"
+                                      Command="{Binding SaveCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Gallery">
+                            <MenuItem Header="Add image"
+                                      Foreground="Black"
+                                      Command="{Binding AddCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Edit">
+                            <MenuItem Header="Undo"
+                                      Foreground="Black"
+                                      Command="{Binding UndoCommand}" />
+                        </MenuItem>
+                    </Menu>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <Button Width="20" Height="20"
+                                Content="➖"
+                                FontSize="8"
+                                Padding="0,7,0,0"
+                                Foreground="White"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="ButtonMinimize_Click"/>
+                        <Button Width="20" Height="20"
+                                Content="❌"
+                                Padding="0,0,0,1.47"
+                                FontSize="10.5"
+                                Foreground="#ff5d73"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="CloseButton_Click"/>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ListBox x:Name="picturesList"
+                         Background="#7c7a7a"
+                         Grid.Row="2"
+                         Grid.RowSpan="1"
+                         Width="184"
+                         ItemsSource="{Binding Pictures}"
+                         SelectedItem="{Binding SelectedPicture}"
+                         d:ItemsSource="{d:SampleData ItemCount=2}"
+                         BorderThickness="0"
+                         Margin="0,4,0,4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image x:Name="Image" Width="32" Height="32" Margin="1" Source="{Binding Path=Path}"/>
+                                <StackPanel>
+                                    <TextBlock Margin="3,0,0,0"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Text="{Binding Path=Name}"/>
+                                    <TextBlock x:Name="Category"
+                                               Margin="3,0,0,0"
+                                               FontSize="12"
+                                               Text="{Binding Path=Tag}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Resources>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Visibility" Value="{Binding Path=Vis}" />
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=SearchText, Path=Text}" >
+                                    <Setter Property="Visibility" Value="{Binding Path=Vis}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <Border HorizontalAlignment="Left"
+                    Width="395"
+                    Background="#7c7a7a"
+                    Grid.Row="1" Grid.Column="1"
+                    Grid.RowSpan="2" Grid.ColumnSpan="2"
+                    Margin="0,4,0,4">
+
+                <!-- Move Image element with OpenCV custom one -->
+                <Image Source="{Binding BitmapImage, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+            </Border>
+
+            <Border HorizontalAlignment="Left"
+                    Width="395"
+                    Background="#7c7a7a"
+                    Grid.Row="1" Grid.Column="2"
+                    Grid.RowSpan="2" Grid.ColumnSpan="2"
+                    Margin="0,4,0,4">
+
+                <!-- Move Image element with OpenCV custom one -->
+                <Image Source="{Binding FilterOutImage, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+            </Border>
+
+            <!--<StackPanel Orientation="Horizontal"
+                        Grid.Row="3" Grid.Column="0"
+                        Margin="5,0,0,0">
+
+                --><!-- Move it with dialog command (right click on image in list) --><!--
+                <Button Command="{Binding RemoveCommand}"
+                        CommandParameter="{Binding SelectedPicture}"
+                        Content="-"
+                        FontWeight="Bold"
+                        Width="42" Height="20"
+                        Margin="5,0,0,0"
+                        Foreground="White"
+                        Background="Transparent"
+                        BorderThickness="0.7"/>
+            </StackPanel>-->
+
+            <!-- CATEGORIES LIST -->
+            <!--
+            <ComboBox x:Name="ComboBoxCategories"
+                      SelectedIndex="0"
+                      Grid.Row="3"
+                      Width="92"
+                      HorizontalAlignment="Left"
+                      Margin="100,4,0,4"
+                      ItemsSource="{Binding Categories, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+            -->
+
+            <TextBox x:Name="SearchBox"
+                     Margin="8,3,8,3"
+                     Grid.Row="1"
+                     Text="{Binding SearchText,
+                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <!--Style="{StaticResource SearchTextbox}"-->
+
+        </Grid>
+    </Border>
+</Window>
