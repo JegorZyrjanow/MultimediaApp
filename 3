@@ -1,0 +1,30 @@
+using Emgu.CV;
+using Emgu.CV.Structure;
+
+namespace ImageProcessingLibrary.Filters
+{
+    public class ScaleFilter // Gonna rename this
+    {
+        float sX = 1.5f;
+        float sY = 1.5f;
+
+        public Image<Bgr, byte> Scale()
+            {
+            // создание нового изображения
+            // высота и ширина нового изображения увеличивается в sX и sY раз соответственно
+            var newImage = new Image<Bgr, byte>((int)(sourceImage.Width * sX), (int)(sourceImage.Height * sY));
+            for (int x = 0; x<sourceImage.Width; x++)
+            {
+                for (int y = 0; y<sourceImage.Height; y++)
+                {
+                    // вычисление новых координат пикселя
+                    int newX = (int)(x * sX);
+                    int newY = (int)(y * sY);
+                    // копирование пикселя в новое изображение
+                    newImage[newY, newX] = sourceImage[y, x];
+                }
+            }
+
+        }
+    }
+}

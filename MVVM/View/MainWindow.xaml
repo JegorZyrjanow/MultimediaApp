@@ -54,6 +54,9 @@
                             <MenuItem Header="Add image"
                                       Foreground="Black"
                                       Command="{Binding AddCommand}" />
+                            <MenuItem Header="Remove selected"
+                                      Foreground="Black"
+                                      Command="{Binding RemoveCommand}" />
                         </MenuItem>
                         <MenuItem Header="Edit">
                             <MenuItem Header="Undo"
@@ -96,38 +99,38 @@
                          d:ItemsSource="{d:SampleData ItemCount=2}"
                          BorderThickness="0"
                          Margin="0,4,0,4">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Image x:Name="Image" Width="32" Height="32" Margin="1" Source="{Binding Path=Path}"/>
-                                <StackPanel>
-                                    <TextBlock Margin="3,0,0,0"
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image x:Name="Image" Width="32" Height="32" Margin="1" Source="{Binding Path=Path}"/>
+                            <StackPanel>
+                                <TextBlock Margin="3,0,0,0"
                                                FontSize="14"
                                                FontWeight="SemiBold"
                                                Text="{Binding Path=Name}"/>
-                                    <TextBlock x:Name="Category"
+                                <TextBlock x:Name="Category"
                                                Margin="3,0,0,0"
                                                FontSize="12"
                                                Text="{Binding Path=Tag}"/>
-                                </StackPanel>
                             </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.Resources>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Visibility" Value="{Binding Path=Vis}" />
-                        </Style>
-                    </ListBox.Resources>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SearchText, Path=Text}" >
-                                    <Setter Property="Visibility" Value="{Binding Path=Vis}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Visibility" Value="{Binding Path=Vis}" />
+                    </Style>
+                </ListBox.Resources>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=SearchText, Path=Text}" >
+                                <Setter Property="Visibility" Value="{Binding Path=Vis}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
 
             <Border HorizontalAlignment="Left"
@@ -149,14 +152,16 @@
                     Margin="0,4,0,4">
 
                 <!-- Move Image element with OpenCV custom one -->
-                <Image Source="{Binding FilterOutImage, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+                <Image Source="{Binding FilteredImage, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
             </Border>
 
             <!--<StackPanel Orientation="Horizontal"
                         Grid.Row="3" Grid.Column="0"
                         Margin="5,0,0,0">
 
-                --><!-- Move it with dialog command (right click on image in list) --><!--
+                -->
+            <!-- Move it with dialog command (right click on image in list) -->
+            <!--
                 <Button Command="{Binding RemoveCommand}"
                         CommandParameter="{Binding SelectedPicture}"
                         Content="-"
@@ -185,6 +190,9 @@
                      Grid.Row="1"
                      Text="{Binding SearchText,
                      Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <CheckBox Grid.Column="2" Content="Bilinear Filter" HorizontalAlignment="Left" Margin="10,152,0,0" Grid.Row="3" VerticalAlignment="Top" Foreground="White" FontFamily="Verdana" RenderTransformOrigin="0.5,0.5" FontSize="14" />
+
             <!--Style="{StaticResource SearchTextbox}"-->
 
         </Grid>

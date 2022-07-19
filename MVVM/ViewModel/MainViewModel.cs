@@ -11,6 +11,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using ImageProcessingLib.Filters;
+using Emgu.CV;
 
 namespace MultimediaApp
 {
@@ -28,7 +30,6 @@ namespace MultimediaApp
                 _galleryService = GalleryService.GetInstance();
                 // Getting existing pics collection
                 Pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll()); // Copy the gallery is NOT REFERENCE
-                                                                                              // Getting categories
                 Categories = _galleryService.GetTags();
                 // Watching any changes in the GalleryService
                 _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
@@ -188,16 +189,32 @@ namespace MultimediaApp
             }
         }
 
-        public BitmapImage BitmapImage
+        enum Filters
         {
-            get
-            {
+            // filter for comboBox 
+        }
+
+        public BitmapImage BitmapImage => GetImage();
+        public BitmapImage FilteredImage => GetImage();
+
+        private BitmapImage? GetImage(Func<BitmapImage, BitmapImage>? filter = null)
+        {
                 try
                 {
-                    if (_selectedPicture != null)
-                        return new BitmapImage(new Uri(_selectedPicture.Path));
-                    else
+                    Mat matImage = new();
+                    if (_selectedPicture == null)
+                    {
                         return null;
+                    }
+                    if (filter == null)
+                    {
+                        return new BitmapImage(new Uri(_selectedPicture.Path));
+                    } 
+                    else
+                    {
+                        var filteredImage = filter(new BitmapImage(new Uri(_selectedPicture.Path)));
+                        return new BitmapImage(new Uri(_selectedPicture.Path));
+                    }
                 }
                 catch (Exception)
                 {
@@ -223,7 +240,6 @@ namespace MultimediaApp
                     ////return new BitmapImage(Properties.Resources.MissingImage); // If file not found show that it is
                     //return converted;
                 }
-            }
         }
     }
 }
