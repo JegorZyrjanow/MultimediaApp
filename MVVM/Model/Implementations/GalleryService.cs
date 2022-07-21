@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageProcessingLib.Filters;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -13,21 +14,20 @@ namespace MultimediaApp.MVVM.Model
         private readonly ObservableCollection<PictureModel> _pictures;
         public ObservableCollection<PictureModel> Pictures { get { return _pictures; } }
 
-        //private readonly GalleryModel _gallery;
         //private readonly List<string> _tags;
         //private GalleryCaretaker _collectionCaretaker = new GalleryCaretaker(this);
 
-        private readonly XmlService _xmlService = new XmlService();
+        private readonly XmlService _xmlService;
+        private readonly ColorFilter _colorFilter;
+        private static GalleryService _instance;
 
         private GalleryService()
         {
+            _xmlService = new();
+            _colorFilter = new();
             _pictures = ExtractPictures();
         }
-        private static GalleryService _instance;
-        public static GalleryService GetInstance()
-        {
-            return _instance ??= new GalleryService();
-        }
+        public static GalleryService GetInstance() => _instance ??= new();
 
         private ObservableCollection<PictureModel> ExtractPictures()
         {
@@ -127,10 +127,19 @@ namespace MultimediaApp.MVVM.Model
 
         public List<string> GetTags()
         {
-            List<string> cats = new List<string>((from pic in _pictures select pic.Tag).Distinct().ToList());
+            var cats = new List<string>((from pic in _pictures select pic.Tag).Distinct().ToList());
             cats = cats.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
             return cats; // (from pic in _pictures select pic.Tag).Distinct().ToList()
         }
+
+        #region Filters
+
+        public void ToBlackAndWhite()
+        {
+            _colorFilter.
+        }
+
+        #endregion
 
         //public void SetExistingCollectionFromXml()
         //{

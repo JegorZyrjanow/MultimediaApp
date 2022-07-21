@@ -189,6 +189,19 @@ namespace MultimediaApp
             }
         }
 
+        #region Filters
+
+        private RelayCommand toBlackAndWhiteCommand;
+        public RelayCommand ToBlackAndWhiteCommand
+        {
+            get
+            {
+                return toBlackAndWhiteCommand ??= new RelayCommand(obj => _galleryService.ToBlackAndWhite());
+            }
+        }
+
+        #endregion
+
         enum Filters
         {
             // filter for comboBox 
