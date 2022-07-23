@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MultimediaApp.MVVM.Model;
+using MultimediaApp.Model;
 using System.Windows;
 
 namespace MultimediaApp;

@@ -1,5 +1,4 @@
-﻿using MultimediaApp.MVVM.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -11,8 +10,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using ImageProcessingLib.Filters;
 using Emgu.CV;
+using ImageProcessingLib.Filters;
+using MultimediaApp.Model;
 
 namespace MultimediaApp
 {
@@ -29,7 +29,7 @@ namespace MultimediaApp
             {
                 _galleryService = GalleryService.GetInstance();
                 // Getting existing pics collection
-                Pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll()); // Copy the gallery is NOT REFERENCE
+                Pictures = new ObservableCollection<Picture>(_galleryService.GetAll()); // Copy the gallery is NOT REFERENCE
                 Categories = _galleryService.GetTags();
                 // Watching any changes in the GalleryService
                 _galleryService.Pictures.CollectionChanged += CollectionChangedMethod;
@@ -61,7 +61,7 @@ namespace MultimediaApp
                 || e.Action == NotifyCollectionChangedAction.Remove
                 || e.Action == NotifyCollectionChangedAction.Move)
             {
-                Pictures = new ObservableCollection<PictureModel>(_galleryService.GetAll());
+                Pictures = new ObservableCollection<Picture>(_galleryService.GetAll());
 
                 if (lastName != "")
                     SearchText = lastName;
@@ -76,19 +76,19 @@ namespace MultimediaApp
             OnPropertyChanged("Categories");
         }
 
-        private ObservableCollection<PictureModel> _pictures = new ObservableCollection<PictureModel>();
-        public ObservableCollection<PictureModel> Pictures
+        private ObservableCollection<Picture> _pictures = new ObservableCollection<Picture>();
+        public ObservableCollection<Picture> Pictures
         {
             get { return _pictures; }
             set 
             {
-                ObservableCollection<PictureModel> newList = new ObservableCollection<PictureModel>(value.OrderBy(pic => pic.Name));
+                ObservableCollection<Picture> newList = new ObservableCollection<Picture>(value.OrderBy(pic => pic.Name));
                 _pictures = newList;
             }
         }
 
-        private PictureModel _selectedPicture;
-        public PictureModel SelectedPicture
+        private Picture _selectedPicture;
+        public Picture SelectedPicture
         {
             get { return _selectedPicture; }
             set
@@ -120,9 +120,9 @@ namespace MultimediaApp
             set
             {
                 _selectedCategory = value;
-                _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByTag(value));
+                _pictures = new ObservableCollection<Picture>(_galleryService.GetPicturesByTag(value));
                 if (lastName != "")
-                    Pictures = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Name.Contains(lastName) select pic);
+                    Pictures = new ObservableCollection<Picture>(from pic in _pictures where pic.Name.Contains(lastName) select pic);
                 lastTag = value; // Save last category query
                 OnPropertyChanged("Pictures");
             }
@@ -133,10 +133,10 @@ namespace MultimediaApp
         {
             get
             {
-                return addCommand ?? (addCommand = new RelayCommand(obj =>
+                return addCommand ??= new RelayCommand(obj =>
                 {
                     new NamingWindow().ShowDialog(); // Open Naming Window to set Pic parameters
-                }));
+                });
             }
         }
 
@@ -145,13 +145,13 @@ namespace MultimediaApp
         {
             get
             {
-                return removeCommand ?? (removeCommand = new RelayCommand(obj =>
+                return removeCommand ??= new RelayCommand(obj =>
                 {
                     if (SelectedPicture == null)
                         return;
                     _galleryService.Remove(_selectedPicture.Id);
                 },
-                (obj) => Pictures.Count > 0));
+                (obj) => Pictures.Count > 0);
             }
         }
 
@@ -160,7 +160,7 @@ namespace MultimediaApp
         {
             get
             {
-                return saveCommand ?? (saveCommand = new RelayCommand(obj => _galleryService.SaveToXml()));
+                return saveCommand ??= new RelayCommand(obj => _galleryService.SaveToXml());
             }
         }
 
@@ -169,7 +169,7 @@ namespace MultimediaApp
         {
             get
             {
-                return undoCommand ?? (undoCommand = new RelayCommand(obj => _galleryService.Undo()));
+                return undoCommand ??= new RelayCommand(obj => _galleryService.Undo());
             }
         }
 
@@ -181,9 +181,9 @@ namespace MultimediaApp
             {
                     _searchText = value;
                     OnPropertyChanged("SearchText");
-                    _pictures = new ObservableCollection<PictureModel>(_galleryService.GetPicturesByName(value));
+                    _pictures = new ObservableCollection<Picture>(_galleryService.GetPicturesByName(value));
                     if (lastTag != "Show all")
-                        Pictures = new ObservableCollection<PictureModel>(from pic in _pictures where pic.Tag == lastTag select pic);
+                        Pictures = new ObservableCollection<Picture>(from pic in _pictures where pic.Tag == lastTag select pic);
                     lastName = value; //Save last search text
                     OnPropertyChanged("Pictures");
             }

@@ -1,9 +1,1 @@
-<?xml version="1.0"?>
-<ArrayOfPictureModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <PictureModel>
-    <Name>adsf</Name>
-    <Tag>asdf</Tag>
-    <Path>C:\Users\Hugo\Downloads\manga.jpg</Path>
-    <Id>6</Id>
-  </PictureModel>
-</ArrayOfPictureModel>
+﻿<?xml version="1.0" encoding="utf-8"?><ArrayOfPicture xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Picture><Id>1</Id><Name>asdf</Name><Tag>fda</Tag><Path>C:\Users\Hugo\Downloads\line texture.jpg</Path></Picture></ArrayOfPicture>
